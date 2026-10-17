@@ -1,0 +1,900 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><style>[hidden]{display:none!important}body{margin:0}</style>
+<title>Amazon Fire Lab</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: lab bench with three method tabs (ABM grid · SD stocks · DES queue), each = model view left, control rack right, experiments below */
+:root{
+  --bg:#f2f4ee; --surface:#ffffff; --ink:#1c2920; --muted:#5a6a5f; --line:#d5dccf;
+  --accent:#cf4f17; --accent-soft:#f6e3d8;
+  --forest:#2e7a3c; --degraded:#a3c23d; --soil:#e7e1d2; --burned:#3b3330; --break:#8b6b44; --saved:#9ba5a1; --fighter:#1f5fd1; --rain:#2b8fb3;
+  --display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --body:"IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f1510; --surface:#172019; --ink:#e5ece3; --muted:#98a79b; --line:#2b372d;
+  --accent:#f2763c; --accent-soft:#3a2418;
+  --forest:#3f9a4f; --degraded:#b6d655; --soil:#2a2721; --burned:#090807; --break:#a5834f; --saved:#5d6764; --fighter:#5b93ff; --rain:#4cb3d6;
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1510; --surface:#172019; --ink:#e5ece3; --muted:#98a79b; --line:#2b372d;
+  --accent:#f2763c; --accent-soft:#3a2418;
+  --forest:#3f9a4f; --degraded:#b6d655; --soil:#2a2721; --burned:#090807; --break:#a5834f; --saved:#5d6764; --fighter:#5b93ff; --rain:#4cb3d6;
+  color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5}
+.wrap{max-width:1200px;margin:0 auto;padding-block:28px 48px;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));display:grid;gap:26px}
+header{display:grid;gap:6px}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+h1{font-family:var(--display);font-weight:800;font-size:clamp(30px,5vw,46px);line-height:1.05;margin:0;text-wrap:balance}
+h2{font-family:var(--display);font-weight:600;font-size:22px;margin:0;text-wrap:balance}
+.lede{color:var(--muted);max-width:72ch;margin:0}
+.credit{font-size:13px;color:var(--muted);margin:0;max-width:90ch}
+.credit a,.note a{color:inherit}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;border-bottom:1px solid var(--line)}
+.tab{border:1px solid transparent;border-bottom:none;border-radius:8px 8px 0 0;background:none;padding:10px 14px;display:grid;gap:0;text-align:left;margin-bottom:-1px;color:var(--muted)}
+.tab b{font-family:var(--display);font-weight:600;font-size:16px;color:var(--ink)}
+.tab small{font-family:var(--mono);font-size:11px;letter-spacing:.05em;text-transform:uppercase}
+.tab[aria-selected="true"]{background:var(--surface);border-color:var(--line);color:var(--accent)}
+.tab[aria-selected="true"] small{color:var(--accent)}
+.view{display:grid;gap:24px}
+.view[hidden],.overlay[hidden]{display:none}
+.question{font-family:var(--display);font-size:19px;font-weight:600;margin:0;max-width:70ch;text-wrap:balance}
+.question span{font-family:var(--mono);font-size:12px;font-weight:400;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:2px}
+.bench{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:24px;align-items:start}
+.duo{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}
+@media (max-width:860px){.bench,.duo{grid-template-columns:1fr}}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px;display:grid;gap:14px;min-width:0;align-content:start}
+canvas#world{width:100%;max-width:100%;aspect-ratio:1/1;display:block;border-radius:6px;image-rendering:pixelated;background:var(--soil)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12.5px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sw{width:11px;height:11px;border-radius:2px;display:inline-block}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px}
+.stat{border:1px solid var(--line);border-radius:8px;padding:10px 12px;display:grid;gap:2px}
+.stat b{font-family:var(--mono);font-weight:500;font-size:21px;font-variant-numeric:tabular-nums}
+.stat small{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.stat.hot b{color:var(--accent)}
+.pill{display:inline-block;font-family:var(--mono);font-size:11.5px;padding:2px 8px;border-radius:999px;border:1px solid var(--line);color:var(--muted)}
+.pill.warn{border-color:var(--accent);color:var(--accent)}
+.pill.ok{border-color:var(--forest);color:var(--forest)}
+.btns{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+button{font:inherit;font-weight:600;font-size:14px;border-radius:7px;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:8px 14px;cursor:pointer}
+button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+button:hover{border-color:var(--accent)}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+button:disabled{opacity:.55;cursor:default}
+.presets{display:flex;flex-wrap:wrap;gap:6px}
+.presets button{font-weight:500;font-size:13px;padding:6px 10px}
+.presets button[aria-pressed="true"]{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+.ctrl{display:grid;gap:4px}
+.ctrl label{display:flex;justify-content:space-between;gap:12px;font-size:13.5px}
+.ctrl label span:last-child{font-family:var(--mono);font-variant-numeric:tabular-nums;color:var(--muted);white-space:nowrap}
+.ctrl .hint{font-size:12px;color:var(--muted)}
+.ctrl.star label span:first-child{font-weight:600}
+input[type=range]{width:100%;accent-color:var(--accent)}
+select{font:inherit;font-size:13.5px;padding:6px 8px;border-radius:7px;border:1px solid var(--line);background:var(--surface);color:var(--ink);width:100%}
+.switch{display:flex;align-items:center;gap:10px;font-size:13.5px}
+.switch input{width:18px;height:18px;accent-color:var(--accent)}
+.group{display:grid;gap:12px;padding-top:4px;border-top:1px solid var(--line)}
+.group h3{margin:8px 0 0;font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.chart{width:100%;max-width:100%;height:auto;display:block}
+.chart text{fill:var(--muted);font-family:var(--mono);font-size:11px}
+.chart .grid{stroke:var(--line);stroke-width:1}
+.note{font-size:13px;color:var(--muted);margin:0}
+.callout{background:var(--accent-soft);border-radius:8px;padding:10px 12px;font-size:13.5px}
+.callout b{font-family:var(--mono);font-weight:500}
+.status{font-family:var(--mono);font-size:12px;color:var(--muted)}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600}
+td.num,th.num{text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+.tablewrap{overflow-x:auto}
+.cld text{font-family:var(--body);font-size:13px;fill:var(--ink)}
+.cld .sign{font-family:var(--mono);font-size:15px;font-weight:500;fill:var(--accent)}
+.cld .loop{font-family:var(--display);font-size:20px;font-weight:600;fill:var(--muted)}
+.chain{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+@media (max-width:760px){.chain{grid-template-columns:1fr}}
+.chain div{border:1px solid var(--line);border-radius:8px;padding:12px;display:grid;gap:4px}
+.chain b{font-family:var(--display);font-weight:600;font-size:16px}
+.chain small{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent)}
+.headrow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:24px;align-items:start}
+@media (max-width:760px){.headrow{grid-template-columns:1fr}}
+.share{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:12px;display:grid;gap:8px;justify-items:center;width:200px}
+.qrbox{background:#fff;padding:8px;border-radius:6px;line-height:0}
+.qrbox img,.qrbox canvas{display:block;width:150px;height:150px}
+.share small{font-size:11.5px;color:var(--muted);text-align:center}
+.share code{font-family:var(--mono);font-size:10.5px;word-break:break-all;text-align:center;user-select:all;color:var(--ink)}
+.overlay{position:fixed;inset:0;background:rgba(10,14,11,.86);display:grid;place-items:center;z-index:50;padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.overlay .card{background:#fff;color:#111;border-radius:14px;padding:24px;display:grid;gap:12px;justify-items:center;max-width:100%}
+.overlay .card b{font-family:var(--display);font-size:clamp(20px,3vw,30px)}
+.overlay .card span{font-family:var(--mono);font-size:13px;word-break:break-all;text-align:center}
+#qrBig img,#qrBig canvas{width:min(70vh,80vw);height:min(70vh,80vw);display:block}
+@media (prefers-reduced-motion: reduce){*{scroll-behavior:auto}}
+</style>
+
+<div class="wrap">
+  <header class="headrow">
+   <div style="display:grid;gap:6px;min-width:0">
+    <div class="eyebrow">WWF wildfire risk · Amazon · three simulation methods</div>
+    <h1>Amazon Fire Lab</h1>
+    <p class="lede">One problem, three lenses. The agent-based model shows how a single fire spreads through the landscape. The system dynamics model shows where the forest is heading until 2100. The discrete event model shows whether fire brigades can keep up during the fire season.</p>
+    <p class="credit">Agent-based core: Wilensky, U. (1997). <a href="https://ccl.northwestern.edu/netlogo/models/Fire" target="_blank" rel="noopener">NetLogo Fire model</a>, CCL, Northwestern University; re-implemented and extended (degraded forest, drought, wind, spread speed, ignition types, rain, protected territory, firefighter agents, firebreak). System dynamics and discrete event models: own stylized models; parameters are illustrative assumptions, not calibrated forecasts. Context figures: Flores et al. (2024), Nature; Lovejoy &amp; Nobre (2018), Science Advances.</p>
+   </div>
+   <aside class="share" aria-label="Open on your phone">
+     <div class="qrbox" id="qrSmall"></div>
+     <small>Scan to run the simulation on your phone</small>
+     <code id="shareUrl"></code>
+     <div class="btns" style="justify-content:center"><button id="bQr">Show large</button><button id="bCopy">Copy link</button></div>
+   </aside>
+  </header>
+  <div class="overlay" id="qrOverlay" hidden>
+    <div class="card"><b>Amazon Fire Lab</b><div id="qrBig"></div><span id="shareUrl2"></span><button id="bQrClose">Close</button></div>
+  </div>
+
+  <nav class="tabs" role="tablist" aria-label="Simulation method">
+    <button class="tab" role="tab" id="tab-abm" aria-controls="view-abm" aria-selected="true"><small>Agent-based</small><b>Fire spread</b></button>
+    <button class="tab" role="tab" id="tab-sd" aria-controls="view-sd" aria-selected="false"><small>System dynamics</small><b>Forest until 2100</b></button>
+    <button class="tab" role="tab" id="tab-des" aria-controls="view-des" aria-selected="false"><small>Discrete event</small><b>Brigade dispatch</b></button>
+    <button class="tab" role="tab" id="tab-cmp" aria-controls="view-cmp" aria-selected="false"><small>Synthesis</small><b>Compare methods</b></button>
+  </nav>
+
+  <!-- ===================== ABM ===================== -->
+  <section class="view" id="view-abm" role="tabpanel" aria-labelledby="tab-abm">
+    <p class="question"><span>Question · individual level · hours to days</span>How does one fire spread through intact and degraded forest, and which local measures stop it?</p>
+    <div class="bench">
+      <div class="panel">
+        <canvas id="world" width="606" height="606" aria-label="Forest grid simulation"></canvas>
+        <div class="legend">
+          <span><i class="sw" style="background:var(--forest)"></i>Intact forest</span>
+          <span><i class="sw" style="background:var(--degraded)"></i>Degraded forest</span>
+          <span><i class="sw" style="background:var(--accent)"></i>Burning</span>
+          <span><i class="sw" style="background:var(--burned)"></i>Burned</span>
+          <span><i class="sw" style="background:var(--saved)"></i>Extinguished</span>
+          <span><i class="sw" style="background:var(--break)"></i>Firebreak</span>
+          <span><i class="sw" style="background:var(--fighter);border-radius:50%"></i>Fire brigade</span>
+          <span><i class="sw" style="border:2px dashed var(--rain)"></i>Protected territory</span>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="stats">
+          <div class="stat hot"><small>Burned</small><b id="sBurned">0.0%</b></div>
+          <div class="stat"><small>Tick</small><b id="sTick">0</b></div>
+          <div class="stat"><small>Active fires</small><b id="sFires">0</b></div>
+          <div class="stat"><small>Extinguished</small><b id="sSaved">0</b></div>
+        </div>
+        <div class="btns">
+          <button id="bSetup">Setup</button>
+          <button id="bGo" class="primary">Go</button>
+          <button id="bStep">Step</button>
+          <span class="pill" id="sState">ready</span>
+        </div>
+        <svg id="liveChart" class="chart" viewBox="0 0 420 140" role="img" aria-label="Burned share over time"></svg>
+
+        <div class="group">
+          <h3>Scenario presets</h3>
+          <div class="presets" id="abmPresets"></div>
+          <p class="note" id="presetNote">Pick a preset or move the sliders.</p>
+        </div>
+        <div class="group">
+          <h3>Fire behaviour</h3>
+          <div class="ctrl star"><label for="spread"><span>Fire spread speed</span><span id="vspread"></span></label><input type="range" id="spread" min="25" max="200" step="5" value="100">
+            <div class="hint">Multiplies the chance that a burning cell ignites its neighbours. 100 % = base model.</div></div>
+          <div class="ctrl star"><label for="tps"><span>Animation speed</span><span id="vtps"></span></label><input type="range" id="tps" min="1" max="60" value="20">
+            <div class="hint">Only how fast you watch it; does not change the result.</div></div>
+          <div class="ctrl"><label for="ignition"><span>Ignition source</span><span></span></label>
+            <select id="ignition">
+              <option value="edge">Agricultural frontier (left edge burns)</option>
+              <option value="scattered">Scattered pasture burns (12 fires)</option>
+              <option value="lightning">Lightning season (random strikes)</option>
+            </select></div>
+        </div>
+        <div class="group">
+          <h3>Landscape</h3>
+          <div class="ctrl"><label for="density"><span>Forest cover</span><span id="vdensity"></span></label><input type="range" id="density" min="30" max="95" value="65"></div>
+          <div class="ctrl"><label for="degradation"><span>Degraded share of forest</span><span id="vdegradation"></span></label><input type="range" id="degradation" min="0" max="100" value="20"></div>
+          <label class="switch" for="protected"><input type="checkbox" id="protected"> Protected / Indigenous territory (right third: no degradation, humid microclimate −25 % spread)</label>
+        </div>
+        <div class="group">
+          <h3>Climate</h3>
+          <div class="ctrl"><label for="drought"><span>Drought</span><span id="vdrought"></span></label><input type="range" id="drought" min="0" max="100" value="30">
+            <div class="hint">Base spread chance: intact 60 + 0.35 × drought %, degraded 85 + 0.15 × drought %</div></div>
+          <div class="ctrl"><label for="wind"><span>Wind (ember jump 2 cells east)</span><span id="vwind"></span></label><input type="range" id="wind" min="0" max="100" value="10"></div>
+          <div class="ctrl"><label for="rain"><span>Rain arrives at tick</span><span id="vrain"></span></label><input type="range" id="rain" min="0" max="150" step="5" value="0">
+            <div class="hint">Rain puts out 70 % of active fires and halves spread afterwards. 0 = no rain.</div></div>
+        </div>
+        <div class="group">
+          <h3>WWF policy levers</h3>
+          <div class="ctrl"><label for="ff"><span>Fire brigades</span><span id="vff"></span></label><input type="range" id="ff" min="0" max="50" value="0"></div>
+          <div class="ctrl"><label for="delay"><span>Brigade response delay</span><span id="vdelay"></span></label><input type="range" id="delay" min="0" max="60" value="0"></div>
+          <label class="switch" for="fb"><input type="checkbox" id="fb"> Firebreak through the middle</label>
+        </div>
+        <p class="note">Changing a setting resets the forest. Animation speed applies immediately.</p>
+      </div>
+    </div>
+
+    <div class="duo">
+      <div class="panel">
+        <h2>Tipping point experiment</h2>
+        <p class="note">Mean burned share for forest cover 40–80 %, 15 runs per value. Uses current fire, landscape and climate settings; frontier ignition, no brigades, no firebreak, no rain.</p>
+        <svg id="sweepChart" class="chart" viewBox="0 0 460 260" role="img" aria-label="Burned share by forest cover"></svg>
+        <div class="callout" id="sweepNote">Running…</div>
+        <div class="btns"><button id="bSweep">Run with current settings</button><span class="status" id="sweepStatus"></span></div>
+      </div>
+      <div class="panel">
+        <h2>Scenario comparison</h2>
+        <p class="note">All presets, 20 runs each. The model is stochastic, so the bars show the mean and the line the range.</p>
+        <svg id="scenChart" class="chart" viewBox="0 0 460 300" role="img" aria-label="Burned share by scenario"></svg>
+        <div class="btns"><button id="bScen">Run comparison again</button><span class="status" id="scenStatus"></span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== SD ===================== -->
+  <section class="view" id="view-sd" role="tabpanel" aria-labelledby="tab-sd" hidden>
+    <p class="question"><span>Question · aggregate level · years to decades</span>Does the Amazon cross its tipping point before 2100, and which WWF levers keep it below?</p>
+    <div class="bench">
+      <div class="panel">
+        <h2>Stocks 2025–2100</h2>
+        <svg id="sdChart" class="chart" viewBox="0 0 560 300" role="img" aria-label="Forest stocks over time"></svg>
+        <div class="legend">
+          <span><i class="sw" style="background:var(--forest)"></i>Intact forest</span>
+          <span><i class="sw" style="background:var(--degraded)"></i>Degraded forest</span>
+          <span><i class="sw" style="background:var(--burned)"></i>Cleared / savanna</span>
+          <span><i class="sw" style="background:var(--rain)"></i>Rainfall index</span>
+        </div>
+        <div class="callout" id="sdNote"></div>
+      </div>
+      <div class="panel">
+        <div class="stats">
+          <div class="stat hot"><small>Forest 2100</small><b id="sdForest">–</b></div>
+          <div class="stat"><small>Intact 2100</small><b id="sdIntact">–</b></div>
+          <div class="stat"><small>Tipping year</small><b id="sdTip">–</b></div>
+        </div>
+        <div class="group">
+          <h3>Scenario presets</h3>
+          <div class="presets" id="sdPresets"></div>
+        </div>
+        <div class="group">
+          <h3>Drivers</h3>
+          <div class="ctrl"><label for="sdDef"><span>Deforestation rate</span><span id="vsdDef"></span></label><input type="range" id="sdDef" min="0" max="2" step="0.1" value="0.6"></div>
+          <div class="ctrl"><label for="sdWarm"><span>Warming by 2100</span><span id="vsdWarm"></span></label><input type="range" id="sdWarm" min="1.2" max="4.5" step="0.1" value="2.7"></div>
+        </div>
+        <div class="group">
+          <h3>WWF policy levers</h3>
+          <div class="ctrl"><label for="sdCut"><span>Deforestation cut (supply chains, EUDR)</span><span id="vsdCut"></span></label><input type="range" id="sdCut" min="0" max="100" step="5" value="0"></div>
+          <div class="ctrl"><label for="sdRest"><span>Restoration of degraded forest</span><span id="vsdRest"></span></label><input type="range" id="sdRest" min="0" max="3" step="0.1" value="0"></div>
+          <div class="ctrl"><label for="sdFm"><span>Fire management (fewer fires)</span><span id="vsdFm"></span></label><input type="range" id="sdFm" min="0" max="80" step="5" value="0"></div>
+        </div>
+        <p class="note">Start values 2025: 74 % intact, 6 % degraded, 20 % cleared (Flores et al. 2024). Tipping when the rainfall index falls below 0.68; after that, dieback turns forest into savanna.</p>
+      </div>
+    </div>
+    <div class="duo">
+      <div class="panel">
+        <h2>Causal loop diagram</h2>
+        <svg id="cld" class="chart cld" viewBox="0 0 680 370" role="img" aria-label="Causal loop diagram"></svg>
+        <p class="note">R1 moisture recycling and R2 fire–degradation push the system towards the tipping point. B1 is the WWF lever: forest loss creates public pressure that cuts deforestation.</p>
+      </div>
+      <div class="panel">
+        <h2>Forest cover by scenario</h2>
+        <svg id="sdScen" class="chart" viewBox="0 0 460 280" role="img" aria-label="Forest cover by scenario"></svg>
+        <div class="tablewrap"><table><thead><tr><th>Scenario</th><th class="num">Forest 2100</th><th class="num">Tipping year</th></tr></thead><tbody id="sdTable"></tbody></table></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== DES ===================== -->
+  <section class="view" id="view-des" role="tabpanel" aria-labelledby="tab-des" hidden>
+    <p class="question"><span>Question · individual events · one fire season</span>How many fire brigades does a region need so that new fires are reached before they grow out of control?</p>
+    <div class="bench">
+      <div class="panel">
+        <h2>Fires waiting for a brigade (30-day season)</h2>
+        <svg id="desChart" class="chart" viewBox="0 0 560 260" role="img" aria-label="Queue length over time"></svg>
+        <div class="callout" id="desNote"></div>
+        <h2>Event log, first day</h2>
+        <div class="tablewrap"><table><thead><tr><th class="num">Time</th><th>Event</th><th class="num">Queue</th><th class="num">Busy</th></tr></thead><tbody id="desLog"></tbody></table></div>
+      </div>
+      <div class="panel">
+        <div class="stats">
+          <div class="stat hot"><small>Mean wait</small><b id="dWait">–</b></div>
+          <div class="stat"><small>Wait &gt; 12 h</small><b id="dLate">–</b></div>
+          <div class="stat"><small>Utilisation</small><b id="dUtil">–</b></div>
+          <div class="stat"><small>Burned area</small><b id="dArea">–</b></div>
+        </div>
+        <div class="btns"><span class="pill" id="dRho">ρ</span><button id="bDes">Run new season</button></div>
+        <div class="group">
+          <h3>Scenario presets</h3>
+          <div class="presets" id="desPresets"></div>
+        </div>
+        <div class="group">
+          <h3>Arrivals and service</h3>
+          <div class="ctrl"><label for="dLam"><span>Fire alerts per day (λ)</span><span id="vdLam"></span></label><input type="range" id="dLam" min="1" max="40" value="12">
+            <div class="hint">Poisson arrivals, i.e. exponential time between alerts. Rises with drought.</div></div>
+          <div class="ctrl"><label for="dS"><span>Mean travel + suppression time</span><span id="vdS"></span></label><input type="range" id="dS" min="1" max="24" step="0.5" value="6">
+            <div class="hint">Exponential service time (1/μ).</div></div>
+          <div class="ctrl"><label for="dG"><span>Fire growth while unattended</span><span id="vdG"></span></label><input type="range" id="dG" min="1" max="50" value="10"></div>
+        </div>
+        <div class="group">
+          <h3>WWF policy levers</h3>
+          <div class="ctrl"><label for="dC"><span>Fire brigades (servers, c)</span><span id="vdC"></span></label><input type="range" id="dC" min="1" max="15" value="4"></div>
+          <div class="ctrl"><label for="dDisc"><span>Queue discipline</span><span></span></label>
+            <select id="dDisc"><option value="fifo">First come, first served (FIFO)</option><option value="prot">Protected territory first (priority)</option></select>
+            <div class="hint">With priority, 30 % of alerts lie in protected territory and jump the queue.</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="duo">
+      <div class="panel">
+        <h2>How many brigades are enough?</h2>
+        <p class="note">Mean waiting time by number of brigades, 10 seasons each, current arrivals and service time. Waits are capped at 48 h in the chart.</p>
+        <svg id="desSweep" class="chart" viewBox="0 0 460 260" role="img" aria-label="Mean wait by number of brigades"></svg>
+      </div>
+      <div class="panel">
+        <h2>Model logic (M/M/c queue)</h2>
+        <div class="tablewrap"><table><tbody>
+          <tr><td>Entities</td><td>Fire alerts</td></tr>
+          <tr><td>Resources</td><td>Fire brigades (c servers)</td></tr>
+          <tr><td>Events</td><td>Alert arrives · brigade starts · fire put out</td></tr>
+          <tr><td>Queue</td><td>FIFO, or priority for protected territory</td></tr>
+          <tr><td>Time handling</td><td>Next-event technique</td></tr>
+          <tr><td>Key ratio</td><td>ρ = λ / (c · μ). At ρ ≥ 1 the queue grows without limit.</td></tr>
+          <tr><td>Output</td><td>Waiting time, utilisation, burned hectares</td></tr>
+        </tbody></table></div>
+        <p class="note">Same queuing logic as the M/M/1 example in Unit 3, extended to several servers.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== COMPARE ===================== -->
+  <section class="view" id="view-cmp" role="tabpanel" aria-labelledby="tab-cmp" hidden>
+    <p class="question"><span>Synthesis</span>Which method answers which WWF question?</p>
+    <div class="panel">
+      <div class="tablewrap"><table>
+        <thead><tr><th></th><th>Agent-based (ABM)</th><th>System dynamics (SD)</th><th>Discrete event (DES)</th></tr></thead>
+        <tbody>
+          <tr><td>WWF question</td><td>How does a fire spread and which local measures stop it?</td><td>Does the Amazon cross its tipping point by 2100?</td><td>How many brigades are needed in the fire season?</td></tr>
+          <tr><td>Level</td><td>Individual cells and brigades</td><td>Aggregate stocks (cohort)</td><td>Individual alerts in a process</td></tr>
+          <tr><td>Abstraction</td><td>Low · operational</td><td>High · strategic</td><td>Medium · tactical/operational</td></tr>
+          <tr><td>Time</td><td>Time slicing (ticks)</td><td>Continuous (numerical integration, dt = 0.25 y)</td><td>Next-event technique</td></tr>
+          <tr><td>Randomness</td><td>Stochastic</td><td>Deterministic</td><td>Stochastic</td></tr>
+          <tr><td>Key mechanism</td><td>Emergence from local rules</td><td>Feedback loops (R1, R2, B1)</td><td>Queues and limited resources</td></tr>
+          <tr><td>Main output</td><td>Burned share, threshold cover</td><td>Forest cover, tipping year</td><td>Waiting time, utilisation</td></tr>
+          <tr><td>Limitation</td><td>Stylized grid, no real map</td><td>Aggregated, no spatial detail</td><td>No fire physics</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+    <div class="panel">
+      <h2>Multi-method view</h2>
+      <div class="chain">
+        <div><small>DES → ABM</small><b>Response time</b><span class="note">Waiting time from the dispatch model becomes the brigade response delay in the fire spread model.</span></div>
+        <div><small>ABM → SD</small><b>Burned share</b><span class="note">Burned share per fire season feeds the fire flow from intact to degraded forest.</span></div>
+        <div><small>SD → DES</small><b>Fire alerts</b><span class="note">Lower rainfall and more degraded forest raise the number of fire alerts per day.</span></div>
+      </div>
+      <p class="note">Coupling the three methods is what Unit 1 calls multi-method simulation modelling. In this dashboard the models run separately; the links show how a hybrid model would connect them.</p>
+    </div>
+  </section>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+// ===== MODEL-START (pure functions, no DOM) =====
+const N = 101;
+const EMPTY=0, FOREST=1, DEGR=2, FIRE=3, EMBER=4, BURNED=5, BREAK=6, SAVED=7;
+const EMBER_TICKS = 12;            // NetLogo: ember colour fades 0.3/tick until below red - 3.5
+const LIGHTNING_END = 200;
+const PZ = Math.floor(N*2/3);      // protected territory starts here
+
+function isFuel(st){ return st===FOREST || st===DEGR; }
+function randomFuel(g){ for (let k=0;k<60;k++){ const i=(Math.random()*N*N)|0; if (isFuel(g[i])) return i; } return -1; }
+
+function makeSim(p){
+  const g=new Uint8Array(N*N), age=new Uint8Array(N*N);
+  for (let i=0;i<N*N;i++){
+    const x=i%N;
+    if (Math.random()*100 < p.density){
+      if (p.protected && x>=PZ) g[i]=FOREST;
+      else g[i] = Math.random()*100 < p.degradation ? DEGR : FOREST;
+    }
+  }
+  if (p.firebreak){ const mx=(N-1)/2; for (let y=0;y<N;y++){ g[y*N+mx]=BREAK; g[y*N+mx-1]=BREAK; } }
+  let initial=0; for (let i=0;i<N*N;i++) if (isFuel(g[i])) initial++;
+  const s={g,age,p,initial,burned:0,saved:0,fires:[],embers:[],ff:[],tick:0,history:[],rained:false};
+  if (p.ignition==="edge"){ for (let y=0;y<N;y++){ const i=y*N; if (isFuel(g[i])) ignite(s,i); } }
+  else { const k = p.ignition==="scattered" ? 12 : 3; for (let n=0;n<k;n++){ const i=randomFuel(g); if (i>=0) ignite(s,i); } }
+  for (let k=0;k<p.ff;k++) s.ff.push({x:Math.random()*N, y:Math.random()*N});
+  s.history.push(pct(s));
+  return s;
+}
+function ignite(s,i){ s.g[i]=FIRE; s.fires.push(i); s.burned++; }
+function chance(s,st,j){
+  const d = s.rained ? 0 : s.p.drought;
+  const base = st===DEGR ? 85+0.15*d : 60+0.35*d;
+  const humid = (s.p.protected && j%N>=PZ) ? 0.75 : 1;   // intact protected forest keeps a humid microclimate
+  return Math.min(100, base * s.p.spread/100 * (s.rained?0.5:1) * humid);
+}
+function pct(s){ return s.initial ? s.burned/s.initial*100 : 0; }
+function done(s){ return s.fires.length===0 && s.embers.length===0 && !(s.p.ignition==="lightning" && s.tick<LIGHTNING_END); }
+function tryIgnite(s,j){ const st=s.g[j]; if (isFuel(st) && Math.random()*100 < chance(s,st,j)) ignite(s,j); }
+
+function step(s){
+  if (done(s)) return false;
+  if (s.p.rain>0 && s.tick===s.p.rain){
+    s.rained=true;
+    for (const i of s.fires) if (s.g[i]===FIRE && Math.random()<0.7){ s.g[i]=SAVED; s.saved++; }
+  }
+  const cur=s.fires; s.fires=[];
+  for (const i of cur){
+    if (s.g[i]!==FIRE) continue;
+    const x=i%N, y=(i/N)|0;
+    if (x>0) tryIgnite(s,i-1);
+    if (x<N-1) tryIgnite(s,i+1);
+    if (y>0) tryIgnite(s,i-N);
+    if (y<N-1) tryIgnite(s,i+N);
+    if (x+2<N && Math.random()*100 < s.p.wind*(s.rained?0.3:1)){ const j=i+2; if (isFuel(s.g[j])) ignite(s,j); }
+    s.g[i]=EMBER; s.age[i]=0; s.embers.push(i);
+  }
+  if (s.p.ignition==="lightning" && s.tick<LIGHTNING_END && !s.rained && Math.random()<0.06+0.0006*s.p.drought){
+    const i=randomFuel(s.g); if (i>=0) ignite(s,i);
+  }
+  const keep=[];
+  for (const i of s.embers){ s.age[i]++; if (s.age[i]>=EMBER_TICKS) s.g[i]=BURNED; else keep.push(i); }
+  s.embers=keep;
+  if (s.tick>=s.p.delay){
+    for (const f of s.ff){
+      let best=-1, bd=Infinity;
+      for (const j of s.fires){
+        if (s.g[j]!==FIRE) continue;
+        const dx=(j%N)+0.5-f.x, dy=((j/N)|0)+0.5-f.y, d=dx*dx+dy*dy;
+        if (d<bd){ bd=d; best=j; }
+      }
+      if (best<0) break;
+      const d=Math.sqrt(bd);
+      if (d<1.5){ s.g[best]=SAVED; s.saved++; }
+      else { const tx=(best%N)+0.5, ty=((best/N)|0)+0.5; f.x+=(tx-f.x)/d; f.y+=(ty-f.y)/d; }
+    }
+  }
+  s.tick++;
+  s.history.push(pct(s));
+  return true;
+}
+function runFull(p){ const s=makeSim(p); let guard=0; while(step(s) && guard++<4000){} return pct(s); }
+
+// ---- System dynamics: stocks as shares of the original biome ----
+const RC=0.68;   // critical rainfall index (tipping point)
+function runSD(q){
+  let F=0.74, D=0.06, C=0.20; const dt=0.25; const out=[]; let tip=null;
+  for (let k=0; k<=75/dt; k++){
+    const t=2025+k*dt;
+    const warm=1.2+(q.warm-1.2)*(t-2025)/75;
+    const r=1-0.8*(C+0.4*D)-0.05*(warm-1.2);
+    if (tip===null && r<RC) tip=t;
+    if (Math.abs(t-Math.round(t))<1e-9) out.push({t:Math.round(t),F,D,C,r});
+    const fire=0.003*(1+3*D/Math.max(F+D,1e-6))*(1+3*Math.max(0,0.85-r))*(1-q.fm/100);
+    const def=q.def/100*(1-q.cut/100);
+    const die=Math.max(0,RC-r)*0.15;
+    const deforF=def*F, deforD=def*D, fireF=fire*F, fireD=fire*D, dieF=die*F, dieD=die*D;
+    const rest=q.rest/100*D, regrow=0.002*C;
+    const dF=-deforF-fireF-dieF+rest;
+    const dD=fireF+dieF-deforD-fireD-dieD-rest+regrow;
+    const dC=deforF+deforD+fireD+dieD-regrow;
+    F=Math.max(0,F+dF*dt); D=Math.max(0,D+dD*dt); C=Math.max(0,C+dC*dt);
+  }
+  return {series:out, tip};
+}
+
+// ---- Discrete event: M/M/c dispatch of fire brigades ----
+function expRand(mean){ return -mean*Math.log(1-Math.random()); }
+function runDES(q, withLog){
+  const T=30*24, lamH=q.lam/24;
+  let t=0, nextArr=expRand(1/lamH), id=0;
+  const busy=[];            // end times of active services
+  const queue=[];           // {id, at, prot}
+  const waits=[]; let area=0, busyInt=0, lastT=0, maxQ=0;
+  const timeline=[{t:0,q:0}], log=[];
+  function startService(job, now){
+    const w=now-job.at; waits.push(w);
+    const sv=expRand(q.S);
+    area += q.G*(w + 0.5*sv);
+    busy.push(now+sv);
+    if (withLog && now<24 && log.length<14) log.push({t:now, ev:"Brigade starts fire #"+job.id+(job.prot?" (protected)":"")+(w>0?" after "+w.toFixed(1)+" h":""), q:queue.length, b:busy.length});
+  }
+  for (let guard=0; guard<200000; guard++){
+    let minB=Infinity, mi=-1; for (let k=0;k<busy.length;k++) if (busy[k]<minB){ minB=busy[k]; mi=k; }
+    const arrNext = nextArr<T ? nextArr : Infinity;
+    if (arrNext===Infinity && mi<0) break;
+    const now=Math.min(arrNext,minB);
+    busyInt += busy.length*(now-lastT); lastT=now; t=now;
+    if (arrNext<=minB){
+      const job={id:++id, at:now, prot: q.disc==="prot" && Math.random()<0.3};
+      if (busy.length<q.c){ startService(job,now); }
+      else {
+        if (job.prot){ const k=queue.findIndex(j=>!j.prot); if (k<0) queue.push(job); else queue.splice(k,0,job); } else queue.push(job);
+        if (withLog && now<24 && log.length<14) log.push({t:now, ev:"Alert #"+job.id+(job.prot?" (protected)":"")+" waits", q:queue.length, b:busy.length});
+      }
+      if (withLog && now<24 && log.length<14 && busy.length<=q.c && queue.length===0 && log[log.length-1]?.ev.indexOf("#"+job.id)<0) {}
+      nextArr = now + expRand(1/lamH);
+    } else {
+      busy.splice(mi,1);
+      if (withLog && now<24 && log.length<14) log.push({t:now, ev:"Fire put out, brigade free", q:queue.length, b:busy.length});
+      if (queue.length) startService(queue.shift(), now);
+    }
+    maxQ=Math.max(maxQ,queue.length);
+    timeline.push({t:now,q:queue.length});
+  }
+  const n=waits.length||1;
+  return { n:waits.length, meanW: waits.reduce((a,b)=>a+b,0)/n, late: waits.filter(w=>w>12).length/n, maxQ,
+           util: lastT>0 ? busyInt/(q.c*lastT) : 0, area, timeline, end:lastT, log };
+}
+// ===== MODEL-END =====
+
+(() => {
+  const $=id=>document.getElementById(id);
+  const NS="http://www.w3.org/2000/svg";
+  function el(tag,attrs,parent,text){ const e=document.createElementNS(NS,tag); for(const k in attrs) e.setAttribute(k,attrs[k]); if(text!=null) e.textContent=text; if(parent) parent.appendChild(e); return e; }
+  const tick0=()=>new Promise(r=>setTimeout(r,0));
+  let pal={};
+  function hexToRgb(h){ h=h.trim(); if(h.startsWith("#")){ if(h.length===4) h="#"+h[1]+h[1]+h[2]+h[2]+h[3]+h[3]; const n=parseInt(h.slice(1),16); return [n>>16&255,n>>8&255,n&255]; } const m=h.match(/\d+/g); return m?m.slice(0,3).map(Number):[0,0,0]; }
+  function readPalette(){
+    const cs=getComputedStyle(document.documentElement);
+    for (const k of ["forest","degraded","soil","burned","break","saved","accent","fighter","rain","muted","ink","line"]){ const v=cs.getPropertyValue("--"+k).trim(); pal[k]=hexToRgb(v); pal[k+"Css"]=v; }
+  }
+  function axisY(svg,L,R,W,sy,ticks,fmt){ for (const y of ticks){ el("line",{x1:L,x2:W-R,y1:sy(y),y2:sy(y),class:"grid"},svg); el("text",{x:L-6,y:sy(y)+4,"text-anchor":"end"},svg,fmt(y)); } }
+
+  // ================= TABS =================
+  const tabs=["abm","sd","des","cmp"];
+  function show(name){
+    for (const t of tabs){ $("tab-"+t).setAttribute("aria-selected", t===name?"true":"false"); $("view-"+t).hidden = t!==name; }
+    if (name!=="abm") stop();
+  }
+  for (const t of tabs) $("tab-"+t).addEventListener("click",()=>{ show(t); try{ history.replaceState(null,"","#"+t); }catch(e){} });
+
+  // ================= ABM =================
+  const ids=["density","degradation","drought","wind","spread","ff","delay","rain"];
+  function params(){
+    return { density:+$("density").value, degradation:+$("degradation").value, drought:+$("drought").value, wind:+$("wind").value,
+             spread:+$("spread").value, ff:+$("ff").value, delay:+$("delay").value, rain:+$("rain").value,
+             ignition:$("ignition").value, protected:$("protected").checked, firebreak:$("fb").checked };
+  }
+  const BASE={density:65,degradation:20,drought:30,wind:10,spread:100,ff:0,delay:0,rain:0,ignition:"edge",protected:false,firebreak:false};
+  const PRESETS=[
+    {name:"Baseline", note:"Typical dry season: 65 % cover, 20 % degraded, moderate drought.", p:{}},
+    {name:"Drought year", note:"Extreme drought like 2023/24: drought 85, more wind, 25 % degraded.", p:{drought:85,wind:20,degradation:25}},
+    {name:"Frontier expansion", note:"Cattle frontier: 60 % of the forest degraded by logging and edge effects, 12 scattered pasture burns.", p:{density:64,degradation:60,drought:60,ignition:"scattered"}},
+    {name:"Lightning season", note:"Random lightning strikes across the landscape for 200 ticks.", p:{drought:60,ignition:"lightning"}},
+    {name:"Rain arrives", note:"Drought year, but the rainy season starts at tick 40.", p:{drought:85,wind:20,degradation:25,rain:40}},
+    {name:"Late brigades", note:"Drought year with 20 brigades that only start after 30 ticks.", p:{drought:85,wind:20,degradation:25,ff:20,delay:30}},
+    {name:"Protected territory", note:"Drought year; right third is intact protected or Indigenous land.", p:{drought:85,wind:20,degradation:25,protected:true}},
+    {name:"WWF package", note:"Drought year with restoration (degradation 10 %), protected territory, firebreak and 20 fast brigades.", p:{drought:85,wind:20,degradation:10,protected:true,firebreak:true,ff:20,delay:5}},
+  ];
+  function presetParams(pr){ return {...BASE,...pr.p}; }
+  function applyParams(p){
+    for (const k of ids) $(k).value=p[k];
+    $("ignition").value=p.ignition; $("protected").checked=p.protected; $("fb").checked=p.firebreak;
+  }
+  function syncLabels(){
+    $("vdensity").textContent=$("density").value+" %"; $("vdegradation").textContent=$("degradation").value+" %";
+    $("vdrought").textContent=$("drought").value; $("vwind").textContent=$("wind").value+" %";
+    $("vspread").textContent=$("spread").value+" %"; $("vtps").textContent=$("tps").value+" ticks/s";
+    $("vff").textContent=$("ff").value; $("vdelay").textContent=$("delay").value+" ticks";
+    $("vrain").textContent= +$("rain").value ? "tick "+$("rain").value : "off";
+  }
+  const pbox=$("abmPresets");
+  PRESETS.forEach((pr,i)=>{ const b=document.createElement("button"); b.textContent=pr.name; b.setAttribute("aria-pressed","false");
+    b.addEventListener("click",()=>{ applyParams(presetParams(pr)); markPreset(i); syncLabels(); setup(); }); pbox.appendChild(b); });
+  function markPreset(i){ [...pbox.children].forEach((b,k)=>b.setAttribute("aria-pressed",k===i?"true":"false")); $("presetNote").textContent = i>=0 ? PRESETS[i].note : "Custom settings."; }
+
+  const cv=$("world"), ctx=cv.getContext("2d");
+  const off=document.createElement("canvas"); off.width=N; off.height=N;
+  const octx=off.getContext("2d"); const img=octx.createImageData(N,N);
+  function mix(a,b,t){ return [a[0]+(b[0]-a[0])*t, a[1]+(b[1]-a[1])*t, a[2]+(b[2]-a[2])*t]; }
+  let sim, running=false, raf=0, last=0, acc=0;
+  function draw(){
+    const s=sim, d=img.data;
+    for (let i=0;i<N*N;i++){
+      let c;
+      switch(s.g[i]){
+        case FOREST:c=pal.forest;break; case DEGR:c=pal.degraded;break; case FIRE:c=pal.accent;break;
+        case EMBER:c=mix(pal.accent,pal.burned,s.age[i]/EMBER_TICKS);break; case BURNED:c=pal.burned;break;
+        case BREAK:c=pal.break;break; case SAVED:c=pal.saved;break; default:c=pal.soil;
+      }
+      const o=i*4; d[o]=c[0]; d[o+1]=c[1]; d[o+2]=c[2]; d[o+3]=255;
+    }
+    octx.putImageData(img,0,0);
+    ctx.imageSmoothingEnabled=false; ctx.drawImage(off,0,0,cv.width,cv.height);
+    const k=cv.width/N;
+    if (s.p.protected){ ctx.save(); ctx.setLineDash([8,6]); ctx.strokeStyle=pal.rainCss; ctx.lineWidth=3; ctx.strokeRect(PZ*k+1.5,1.5,cv.width-PZ*k-3,cv.height-3); ctx.restore(); }
+    if (s.rained){ ctx.fillStyle=pal.rainCss; ctx.globalAlpha=0.12; ctx.fillRect(0,0,cv.width,cv.height); ctx.globalAlpha=1; }
+    ctx.fillStyle=pal.fighterCss; ctx.strokeStyle="#ffffff"; ctx.lineWidth=1.5;
+    const active = s.tick>=s.p.delay;
+    ctx.globalAlpha = active?1:0.4;
+    for (const f of s.ff){ ctx.beginPath(); ctx.arc(f.x*k,f.y*k,k*1.3,0,Math.PI*2); ctx.fill(); ctx.stroke(); }
+    ctx.globalAlpha=1;
+    $("sBurned").textContent=pct(s).toFixed(1)+"%"; $("sTick").textContent=s.tick;
+    $("sFires").textContent=s.fires.length; $("sSaved").textContent=s.saved;
+    const st=$("sState");
+    if (done(s)){ st.textContent="finished"; st.className="pill ok"; }
+    else if (s.rained){ st.textContent="raining"; st.className="pill"; }
+    else if (s.ff.length && !active){ st.textContent="brigades on the way"; st.className="pill warn"; }
+    else if (running){ st.textContent="burning"; st.className="pill warn"; }
+    else { st.textContent="paused"; st.className="pill"; }
+    drawLive(s.history);
+  }
+  function drawLive(h){
+    const svg=$("liveChart"); svg.textContent="";
+    const W=420,H=140,L=34,R=10,T=10,B=22, maxX=Math.max(60,h.length-1);
+    const sx=x=>L+(W-L-R)*x/maxX, sy=y=>T+(H-T-B)*(1-y/100);
+    axisY(svg,L,R,W,sy,[0,50,100],v=>v+"%");
+    el("text",{x:L,y:H-5},svg,"0"); el("text",{x:W-R,y:H-5,"text-anchor":"end"},svg,maxX+" ticks");
+    if (sim && sim.p.rain>0 && sim.p.rain<=maxX){ el("line",{x1:sx(sim.p.rain),x2:sx(sim.p.rain),y1:sy(0),y2:sy(100),stroke:pal.rainCss,"stroke-dasharray":"3 3"},svg); el("text",{x:sx(sim.p.rain)+4,y:sy(88),style:"fill:"+pal.rainCss},svg,"rain"); }
+    if (h.length>1){
+      const pts=h.map((v,i)=>sx(i)+","+sy(v)).join(" ");
+      el("polygon",{points:sx(0)+","+sy(0)+" "+pts+" "+sx(h.length-1)+","+sy(0),fill:pal.accentCss,"fill-opacity":"0.14"},svg);
+      el("polyline",{points:pts,fill:"none",stroke:pal.accentCss,"stroke-width":2},svg);
+      el("circle",{cx:sx(h.length-1),cy:sy(h[h.length-1]),r:3.5,fill:pal.accentCss},svg);
+    }
+  }
+  function setup(){ stop(); sim=makeSim(params()); draw(); }
+  function loop(ts){
+    if(!running) return;
+    const dtS=Math.min(0.25,(ts-last)/1000); last=ts; acc+=dtS*(+$("tps").value);
+    let n=Math.min(12,Math.floor(acc)); acc-=n;
+    while(n-->0){ if(!step(sim)){ stop(); break; } }
+    draw();
+    if(running) raf=requestAnimationFrame(loop);
+  }
+  function start(){ if (done(sim)) setup(); running=true; acc=1; last=performance.now(); $("bGo").textContent="Pause"; raf=requestAnimationFrame(loop); }
+  function stop(){ running=false; cancelAnimationFrame(raf); $("bGo").textContent="Go"; if(sim) draw(); }
+
+  for (const id of ids) $(id).addEventListener("input",()=>{ markPreset(-1); syncLabels(); setup(); });
+  for (const id of ["ignition","protected","fb"]) $(id).addEventListener("change",()=>{ markPreset(-1); setup(); });
+  $("tps").addEventListener("input",syncLabels);
+  $("bSetup").addEventListener("click",setup);
+  $("bGo").addEventListener("click",()=> running?stop():start());
+  $("bStep").addEventListener("click",()=>{ running=false; cancelAnimationFrame(raf); $("bGo").textContent="Go"; step(sim); draw(); });
+
+  // --- sweep ---
+  let lastSweep=[], lastScen=[], sweepToken=0;
+  function crossing(rows){ for (let i=1;i<rows.length;i++){ const a=rows[i-1], b=rows[i]; if (a.mean<50 && b.mean>=50) return a.x+(50-a.mean)*(b.x-a.x)/(b.mean-a.mean); } return null; }
+  function drawSweep(rows){
+    const svg=$("sweepChart"); svg.textContent="";
+    const W=460,H=260,L=42,R=14,T=12,B=40, sx=x=>L+(W-L-R)*(x-40)/40, sy=y=>T+(H-T-B)*(1-y/100);
+    axisY(svg,L,R,W,sy,[0,25,50,75,100],v=>v+"%");
+    for (const x of [40,50,60,70,80]) el("text",{x:sx(x),y:H-B+16,"text-anchor":"middle"},svg,x+"%");
+    el("text",{x:(L+W-R)/2,y:H-6,"text-anchor":"middle"},svg,"forest cover");
+    if (!rows.length) return;
+    const pts=rows.map(r=>sx(r.x)+","+sy(r.mean)).join(" ");
+    el("polygon",{points:sx(rows[0].x)+","+sy(0)+" "+pts+" "+sx(rows[rows.length-1].x)+","+sy(0),fill:pal.accentCss,"fill-opacity":"0.12"},svg);
+    el("polyline",{points:pts,fill:"none",stroke:pal.accentCss,"stroke-width":2.2},svg);
+    for (const r of rows) el("circle",{cx:sx(r.x),cy:sy(r.mean),r:3,fill:pal.accentCss},svg);
+    const c=crossing(rows);
+    if (c!=null){ el("line",{x1:sx(c),x2:sx(c),y1:sy(0),y2:sy(100),stroke:pal.fighterCss,"stroke-dasharray":"4 4","stroke-width":1.5},svg);
+      el("text",{x:sx(c)+(c>68?-6:6),y:sy(92),"text-anchor":c>68?"end":"start",style:"fill:"+pal.fighterCss},svg,"50 % burned at "+c.toFixed(1)+" % cover"); }
+  }
+  async function runSweep(){
+    const my=++sweepToken; $("bSweep").disabled=true; $("sweepNote").textContent="Running…";
+    const base={...params(),ff:0,firebreak:false,rain:0,ignition:"edge"}; const rows=[];
+    for (let x=40;x<=80;x+=2){
+      let sum=0; for (let r=0;r<15;r++) sum+=runFull({...base,density:x});
+      if (my!==sweepToken) return;
+      rows.push({x,mean:sum/15}); lastSweep=rows; drawSweep(rows); $("sweepStatus").textContent="cover "+x+" % done"; await tick0();
+    }
+    const c=crossing(rows);
+    $("sweepNote").innerHTML = c!=null
+      ? "Burned share climbs from <b>"+rows[0].mean.toFixed(0)+" %</b> to <b>"+rows[rows.length-1].mean.toFixed(0)+" %</b>, and steeply around <b>"+c.toFixed(1)+" % cover</b>. Above this threshold the forest forms a connected fuel path: a small loss of cover changes the outcome sharply."
+      : (rows[rows.length-1].mean<50 ? "The fire stays small across the whole range. Raise drought, degradation or spread speed to see the threshold." : "Even sparse forest burns widely with these settings. Lower drought or spread speed to see the threshold.");
+    $("sweepStatus").textContent=""; $("bSweep").disabled=false;
+  }
+  function drawScen(res){
+    const svg=$("scenChart"); svg.textContent="";
+    const W=460,L=150,R=56,T=8,rowH=34,H=T+rowH*Math.max(res.length,PRESETS.length)+24;
+    svg.setAttribute("viewBox","0 0 "+W+" "+H);
+    const sx=v=>L+(W-L-R)*v/100;
+    for (const v of [0,50,100]){ el("line",{x1:sx(v),x2:sx(v),y1:T,y2:H-22,class:"grid"},svg); el("text",{x:sx(v),y:H-6,"text-anchor":"middle"},svg,v+"%"); }
+    res.forEach((r,i)=>{
+      const y=T+i*rowH+6, h=rowH-14;
+      el("text",{x:L-8,y:y+h/2+4,"text-anchor":"end",style:"fill:var(--ink)"},svg,r.name);
+      el("rect",{x:L,y,width:Math.max(1,sx(r.mean)-L),height:h,rx:3,fill:i===0?pal.mutedCss:pal.accentCss,"fill-opacity":i===0?"0.5":"0.85"},svg);
+      el("line",{x1:sx(r.min),x2:sx(r.max),y1:y+h/2,y2:y+h/2,stroke:pal.inkCss,"stroke-width":1.2,"stroke-opacity":"0.6"},svg);
+      el("text",{x:sx(Math.max(r.mean,r.max))+6,y:y+h/2+4,style:"fill:var(--ink)"},svg,r.mean.toFixed(0)+"%");
+    });
+  }
+  async function runScen(){
+    $("bScen").disabled=true; const res=[];
+    for (const pr of PRESETS){
+      const vals=[]; const p=presetParams(pr);
+      for (let r=0;r<20;r++){ vals.push(runFull(p)); if (r%4===3) await tick0(); }
+      res.push({name:pr.name, mean:vals.reduce((a,b)=>a+b,0)/vals.length, min:Math.min(...vals), max:Math.max(...vals)});
+      lastScen=res; drawScen(res); $("scenStatus").textContent=pr.name+" done";
+    }
+    $("scenStatus").textContent=""; $("bScen").disabled=false;
+  }
+  $("bSweep").addEventListener("click",runSweep);
+  $("bScen").addEventListener("click",runScen);
+
+  // ================= SD =================
+  const sdIds=["sdDef","sdWarm","sdCut","sdRest","sdFm"];
+  const SD_PRESETS=[
+    {name:"Business as usual", q:{def:0.6,warm:2.7,cut:0,rest:0,fm:0}},
+    {name:"High warming", q:{def:0.6,warm:4.0,cut:0,rest:0,fm:0}},
+    {name:"WWF partial", q:{def:0.6,warm:2.7,cut:50,rest:0.5,fm:30}},
+    {name:"WWF full package", q:{def:0.6,warm:2.7,cut:90,rest:1.5,fm:60}},
+    {name:"Paris 1.5 °C only", q:{def:0.6,warm:1.5,cut:0,rest:0,fm:0}},
+  ];
+  function sdQ(){ return {def:+$("sdDef").value, warm:+$("sdWarm").value, cut:+$("sdCut").value, rest:+$("sdRest").value, fm:+$("sdFm").value}; }
+  function sdLabels(){
+    $("vsdDef").textContent=(+$("sdDef").value).toFixed(1)+" %/yr"; $("vsdWarm").textContent="+"+(+$("sdWarm").value).toFixed(1)+" °C";
+    $("vsdCut").textContent=$("sdCut").value+" %"; $("vsdRest").textContent=(+$("sdRest").value).toFixed(1)+" %/yr"; $("vsdFm").textContent="−"+$("sdFm").value+" %";
+  }
+  const sdBox=$("sdPresets");
+  SD_PRESETS.forEach((pr,i)=>{ const b=document.createElement("button"); b.textContent=pr.name; b.setAttribute("aria-pressed",i===0?"true":"false");
+    b.addEventListener("click",()=>{ $("sdDef").value=pr.q.def; $("sdWarm").value=pr.q.warm; $("sdCut").value=pr.q.cut; $("sdRest").value=pr.q.rest; $("sdFm").value=pr.q.fm;
+      [...sdBox.children].forEach((x,k)=>x.setAttribute("aria-pressed",k===i?"true":"false")); renderSD(); }); sdBox.appendChild(b); });
+  function renderSD(){
+    sdLabels();
+    const {series,tip}=runSD(sdQ());
+    const svg=$("sdChart"); svg.textContent="";
+    const W=560,H=300,L=40,R=40,T=12,B=30, sx=t=>L+(W-L-R)*(t-2025)/75, sy=v=>T+(H-T-B)*(1-v);
+    axisY(svg,L,R,W,sy,[0,0.25,0.5,0.75,1],v=>Math.round(v*100)+"%");
+    for (const t of [2025,2050,2075,2100]) el("text",{x:sx(t),y:H-10,"text-anchor":"middle"},svg,t);
+    const top=(f)=>series.map(s=>sx(s.t)+","+sy(f(s))).join(" ");
+    const band=(lo,hi,fill)=>{ const a=series.map(s=>sx(s.t)+","+sy(hi(s))); const b=series.slice().reverse().map(s=>sx(s.t)+","+sy(lo(s))); el("polygon",{points:a.concat(b).join(" "),fill,"fill-opacity":"0.9"},svg); };
+    band(s=>0,s=>s.F,pal.forestCss); band(s=>s.F,s=>s.F+s.D,pal.degradedCss); band(s=>s.F+s.D,s=>1,pal.burnedCss);
+    el("polyline",{points:top(s=>s.r),fill:"none",stroke:pal.rainCss,"stroke-width":2.5},svg);
+    el("line",{x1:L,x2:W-R,y1:sy(RC),y2:sy(RC),stroke:pal.rainCss,"stroke-dasharray":"5 4","stroke-width":1.2},svg);
+    el("text",{x:W-R+4,y:sy(RC)+4,style:"fill:"+pal.rainCss},svg,RC.toFixed(2));
+    if (tip){ el("line",{x1:sx(tip),x2:sx(tip),y1:sy(0),y2:sy(1),stroke:pal.accentCss,"stroke-width":2},svg);
+      el("text",{x:sx(tip)+(tip>2085?-6:6),y:sy(0.95),"text-anchor":tip>2085?"end":"start",style:"fill:"+pal.accentCss+";font-weight:500"},svg,"tipping "+Math.round(tip)); }
+    const e=series[series.length-1];
+    $("sdForest").textContent=Math.round((e.F+e.D)*100)+"%"; $("sdIntact").textContent=Math.round(e.F*100)+"%"; $("sdTip").textContent= tip?Math.round(tip):"none";
+    $("sdNote").innerHTML = tip
+      ? "Rainfall falls below the critical 0.68 in <b>"+Math.round(tip)+"</b>. From then on dieback adds to deforestation and fire, and forest cover drops to <b>"+Math.round((e.F+e.D)*100)+" %</b> by 2100."
+      : "Rainfall stays above the critical level until 2100. Forest cover ends at <b>"+Math.round((e.F+e.D)*100)+" %</b>, of which <b>"+Math.round(e.F*100)+" %</b> intact.";
+  }
+  function renderSDScen(){
+    const svg=$("sdScen"); svg.textContent="";
+    const W=460,H=280,L=40,R=14,T=12,B=30, sx=t=>L+(W-L-R)*(t-2025)/75, sy=v=>T+(H-T-B)*(1-v/0.9);
+    axisY(svg,L,R,W,sy,[0,0.3,0.6,0.9],v=>Math.round(v*100)+"%");
+    for (const t of [2025,2050,2075,2100]) el("text",{x:sx(t),y:H-10,"text-anchor":"middle"},svg,t);
+    const cols=[pal.mutedCss,pal.accentCss,pal.degradedCss,pal.forestCss,pal.rainCss];
+    const rows=[];
+    SD_PRESETS.forEach((pr,i)=>{
+      const {series,tip}=runSD(pr.q);
+      el("polyline",{points:series.map(s=>sx(s.t)+","+sy(s.F+s.D)).join(" "),fill:"none",stroke:cols[i],"stroke-width":2.4},svg);
+      const e=series[series.length-1];
+      rows.push("<tr><td><i class='sw' style='background:"+cols[i]+"'></i> "+pr.name+"</td><td class='num'>"+Math.round((e.F+e.D)*100)+" %</td><td class='num'>"+(tip?Math.round(tip):"none")+"</td></tr>");
+    });
+    $("sdTable").innerHTML=rows.join("");
+  }
+  function drawCLD(){
+    const svg=$("cld"); svg.textContent="";
+    const defs=el("defs",{},svg); const m=el("marker",{id:"ah",viewBox:"0 0 10 10",refX:"9",refY:"5",markerWidth:"7",markerHeight:"7",orient:"auto-start-reverse"},defs);
+    el("path",{d:"M0,0 L10,5 L0,10 z",fill:pal.mutedCss},m);
+    const nodes={FC:{x:240,y:185,t:["Forest","cover"]},RF:{x:420,y:58,t:["Rainfall","(moisture recycling)"]},DR:{x:590,y:185,t:["Drought &","fire risk"]},
+      DG:{x:420,y:312,t:["Degraded","forest"]},WP:{x:88,y:62,t:["Public pressure","(WWF campaigns)"]},DF:{x:88,y:308,t:["Deforestation"]}};
+    const rx=78, ry=27;
+    function edge(a,b,sign,curv,lx,ly){
+      const A=nodes[a],B=nodes[b]; const mx=(A.x+B.x)/2, my=(A.y+B.y)/2; const dx=B.x-A.x, dy=B.y-A.y, len=Math.hypot(dx,dy);
+      const cx=mx - dy/len*curv*len, cy=my + dx/len*curv*len;
+      const trim=(P,Q)=>{ const ux=Q.x-P.x, uy=Q.y-P.y, l=Math.hypot(ux,uy); const k=1/Math.sqrt((ux/l/rx)**2+(uy/l/ry)**2); return {x:P.x+ux/l*(k+4), y:P.y+uy/l*(k+4)}; };
+      const s=trim(A,{x:cx,y:cy}), e=trim(B,{x:cx,y:cy});
+      el("path",{d:`M${s.x},${s.y} Q${cx},${cy} ${e.x},${e.y}`,fill:"none",stroke:pal.mutedCss,"stroke-width":1.6,"marker-end":"url(#ah)"},svg);
+      const qx=0.25*s.x+0.5*cx+0.25*e.x, qy=0.25*s.y+0.5*cy+0.25*e.y;
+      el("text",{x:qx+(lx||0),y:qy+(ly||0)+5,"text-anchor":"middle",class:"sign"},svg,sign);
+    }
+    edge("FC","RF","+",-0.12,-10,-6);
+    edge("RF","DR","−",-0.12,10,-6);
+    edge("DR","DG","+",-0.12,14,4);
+    edge("DG","FC","−",-0.12,-12,6);
+    edge("DG","DR","+",-0.45,-6,-2);
+    edge("FC","WP","−",0.12,10,-4);
+    edge("WP","DF","−",0.12,-12,0);
+    edge("DF","FC","−",0.12,10,8);
+    for (const k in nodes){ const n=nodes[k]; el("ellipse",{cx:n.x,cy:n.y,rx,ry,fill:pal.accentCss,"fill-opacity":"0.08",stroke:pal.accentCss,"stroke-opacity":"0.55"},svg);
+      const tx=el("text",{x:n.x,y:n.y+(n.t.length>1?-3:5),"text-anchor":"middle"},svg);
+      n.t.forEach((line,i)=>{ const ts=el("tspan",{x:n.x,dy:i?15:0,style:i?"font-size:11.5px;fill:var(--muted)":""},tx,line); }); }
+    el("text",{x:410,y:192,"text-anchor":"middle",class:"loop"},svg,"R1");
+    el("text",{x:548,y:268,"text-anchor":"middle",class:"loop"},svg,"R2");
+    el("text",{x:140,y:192,"text-anchor":"middle",class:"loop"},svg,"B1");
+  }
+  for (const id of sdIds) $(id).addEventListener("input",()=>{ [...sdBox.children].forEach(x=>x.setAttribute("aria-pressed","false")); renderSD(); });
+
+  // ================= DES =================
+  const DES_PRESETS=[
+    {name:"Normal season", q:{lam:6,S:6,G:10,c:4,disc:"fifo"}},
+    {name:"Drought peak", q:{lam:20,S:6,G:15,c:4,disc:"fifo"}},
+    {name:"WWF: + brigades", q:{lam:20,S:6,G:15,c:7,disc:"fifo"}},
+    {name:"WWF: early warning", q:{lam:20,S:3.5,G:15,c:5,disc:"fifo"}},
+    {name:"Protect territory first", q:{lam:20,S:6,G:15,c:6,disc:"prot"}},
+  ];
+  function desQ(){ return {lam:+$("dLam").value, S:+$("dS").value, G:+$("dG").value, c:+$("dC").value, disc:$("dDisc").value}; }
+  function desLabels(){ $("vdLam").textContent=$("dLam").value+" /day"; $("vdS").textContent=(+$("dS").value).toFixed(1)+" h"; $("vdG").textContent=$("dG").value+" ha/h"; $("vdC").textContent=$("dC").value; }
+  const desBox=$("desPresets");
+  DES_PRESETS.forEach((pr,i)=>{ const b=document.createElement("button"); b.textContent=pr.name; b.setAttribute("aria-pressed","false");
+    b.addEventListener("click",()=>{ $("dLam").value=pr.q.lam; $("dS").value=pr.q.S; $("dG").value=pr.q.G; $("dC").value=pr.q.c; $("dDisc").value=pr.q.disc;
+      [...desBox.children].forEach((x,k)=>x.setAttribute("aria-pressed",k===i?"true":"false")); renderDES(); }); desBox.appendChild(b); });
+  function fmtH(h){ return h<1 ? Math.round(h*60)+" min" : h.toFixed(1)+" h"; }
+  function renderDES(){
+    desLabels();
+    const q=desQ(); const r=runDES(q,true);
+    const rho=q.lam/24*q.S/q.c;
+    const pill=$("dRho"); pill.textContent="ρ = "+rho.toFixed(2)+(rho>=1?" · unstable":rho>0.85?" · near capacity":" · stable");
+    pill.className="pill "+(rho>=1?"warn":rho>0.85?"warn":"ok");
+    $("dWait").textContent=fmtH(r.meanW); $("dLate").textContent=Math.round(r.late*100)+" %"; $("dUtil").textContent=Math.round(r.util*100)+" %";
+    $("dArea").textContent=Math.round(r.area).toLocaleString("en")+" ha";
+    // queue chart (step line)
+    const svg=$("desChart"); svg.textContent="";
+    const W=560,H=260,L=40,R=12,T=12,B=30, tEnd=Math.max(720,r.end);
+    const qmax=Math.max(4,...r.timeline.map(p=>p.q)); const top=Math.ceil(qmax/4)*4;
+    const sx=t=>L+(W-L-R)*t/tEnd, sy=v=>T+(H-T-B)*(1-v/top);
+    axisY(svg,L,R,W,sy,[0,top/2,top],v=>v);
+    for (let d=0; d<=30; d+=10) el("text",{x:sx(d*24),y:H-10,"text-anchor":"middle"},svg,"day "+d);
+    let path="M"+sx(0)+","+sy(0);
+    for (const p of r.timeline) path+=" H"+sx(p.t).toFixed(1)+" V"+sy(p.q).toFixed(1);
+    el("path",{d:path+" V"+sy(0)+" Z",fill:pal.accentCss,"fill-opacity":"0.15",stroke:"none"},svg);
+    el("path",{d:path,fill:"none",stroke:pal.accentCss,"stroke-width":1.6},svg);
+    if (r.end>720){ el("line",{x1:sx(720),x2:sx(720),y1:sy(0),y2:sy(top),stroke:pal.mutedCss,"stroke-dasharray":"4 4"},svg); el("text",{x:sx(720)-4,y:sy(top)+12,"text-anchor":"end"},svg,"season ends"); }
+    $("desNote").innerHTML = rho>=1
+      ? "Brigades are overloaded: alerts arrive faster than they can be handled (ρ ≥ 1), so the queue keeps growing during the season. Mean wait <b>"+fmtH(r.meanW)+"</b>, longest queue <b>"+r.maxQ+"</b> fires."
+      : "With <b>"+q.c+"</b> brigades, "+r.n+" alerts this season waited on average <b>"+fmtH(r.meanW)+"</b>; <b>"+Math.round(r.late*100)+" %</b> waited more than 12 hours. Longest queue: <b>"+r.maxQ+"</b> fires.";
+    $("desLog").innerHTML=r.log.map(l=>"<tr><td class='num'>"+String(Math.floor(l.t)).padStart(2,"0")+":"+String(Math.floor((l.t%1)*60)).padStart(2,"0")+"</td><td>"+l.ev+"</td><td class='num'>"+l.q+"</td><td class='num'>"+l.b+"/"+q.c+"</td></tr>").join("");
+    renderDESSweep(q);
+  }
+  function renderDESSweep(q){
+    const svg=$("desSweep"); svg.textContent="";
+    const W=460,H=260,L=40,R=14,T=12,B=40, cap=48, sx=c=>L+(W-L-R)*(c-1)/14, sy=v=>T+(H-T-B)*(1-Math.min(v,cap)/cap);
+    axisY(svg,L,R,W,sy,[0,12,24,36,48],v=>v+"h");
+    for (let c=1;c<=15;c+=2) el("text",{x:sx(c),y:H-B+16,"text-anchor":"middle"},svg,c);
+    el("text",{x:(L+W-R)/2,y:H-6,"text-anchor":"middle"},svg,"number of brigades");
+    const pts=[];
+    for (let c=1;c<=15;c++){ let s=0; for (let k=0;k<10;k++) s+=runDES({...q,c},false).meanW; pts.push({c,w:s/10}); }
+    el("polyline",{points:pts.map(p=>sx(p.c)+","+sy(p.w)).join(" "),fill:"none",stroke:pal.accentCss,"stroke-width":2.2},svg);
+    for (const p of pts){ const cur=p.c===q.c; el("circle",{cx:sx(p.c),cy:sy(p.w),r:cur?6:3,fill:cur?pal.fighterCss:pal.accentCss},svg); }
+    const need=pts.find(p=>p.w<2);
+    if (need){ el("text",{x:sx(need.c)+8,y:sy(need.w)-10,style:"fill:"+pal.fighterCss},svg,"< 2 h wait from "+need.c+" brigades"); }
+    const cmin=q.lam/24*q.S;
+    if (cmin>=1 && cmin<=15){ el("line",{x1:sx(cmin),x2:sx(cmin),y1:sy(0),y2:sy(cap),stroke:pal.mutedCss,"stroke-dasharray":"4 4"},svg); el("text",{x:sx(cmin)+4,y:sy(cap)+12},svg,"ρ = 1"); }
+  }
+  for (const id of ["dLam","dS","dG","dC"]) $(id).addEventListener("input",()=>{ [...desBox.children].forEach(x=>x.setAttribute("aria-pressed","false")); renderDES(); });
+  $("dDisc").addEventListener("change",renderDES);
+  $("bDes").addEventListener("click",renderDES);
+
+  // ================= THEME + BOOT =================
+  function repaintAll(){ readPalette(); if(sim) draw(); drawSweep(lastSweep); if(lastScen.length) drawScen(lastScen); renderSD(); renderSDScen(); drawCLD(); renderDES(); }
+  window.matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change",repaintAll);
+  new MutationObserver(repaintAll).observe(document.documentElement,{attributes:true,attributeFilter:["data-theme"]});
+
+  // ================= SHARE / QR =================
+  // On a public host (GitHub Pages, Netlify, own server) the QR code points to the page itself
+  const selfHosted = /^https?:$/.test(location.protocol) && /(github\.io|netlify\.app|pages\.dev|vercel\.app|univie\.ac\.at)$/.test(location.hostname);
+  const SHARE_URL = selfHosted ? location.href.split("#")[0] : "https://claude.ai/artifact/Brrqf61Jj7qMzLVPYvVoxm";
+  $("shareUrl").textContent=SHARE_URL; $("shareUrl2").textContent=SHARE_URL;
+  function makeQR(target,size){
+    target.textContent="";
+    if (typeof QRCode==="undefined"){ target.textContent="QR code needs an internet connection."; target.style.lineHeight="1.4"; return; }
+    new QRCode(target,{text:SHARE_URL,width:size,height:size,colorDark:"#000000",colorLight:"#ffffff",correctLevel:QRCode.CorrectLevel.M});
+  }
+  makeQR($("qrSmall"),300);
+  $("bQr").addEventListener("click",()=>{ $("qrOverlay").hidden=false; makeQR($("qrBig"),800); $("bQrClose").focus(); });
+  $("bQrClose").addEventListener("click",()=>{ $("qrOverlay").hidden=true; });
+  $("qrOverlay").addEventListener("click",e=>{ if(e.target.id==="qrOverlay") $("qrOverlay").hidden=true; });
+  document.addEventListener("keydown",e=>{ if(e.key==="Escape") $("qrOverlay").hidden=true; });
+  $("bCopy").addEventListener("click",()=>{
+    const b=$("bCopy");
+    const p=navigator.clipboard&&navigator.clipboard.writeText?navigator.clipboard.writeText(SHARE_URL):Promise.reject();
+    p.then(()=>{ b.textContent="Copied"; setTimeout(()=>b.textContent="Copy link",1500); })
+     .catch(()=>{ const r=document.createRange(); r.selectNodeContents($("shareUrl")); const sel=getSelection(); sel.removeAllRanges(); sel.addRange(r); b.textContent="Selected, press Ctrl+C"; });
+  });
+
+  readPalette(); applyParams(BASE); markPreset(0); syncLabels(); setup();
+  for (let k=0;k<35;k++) step(sim); draw();
+  drawSweep([]); drawScen([]);
+  renderSD(); renderSDScen(); drawCLD(); renderDES();
+  const h=(location.hash||"").slice(1); if (tabs.includes(h)) show(h);
+  runSweep().then(runScen);
+})();
+</script>
+
+</html>
