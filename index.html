@@ -9,7 +9,7 @@
 :root{
   --bg:#f2f4ee; --surface:#ffffff; --ink:#1c2920; --muted:#5a6a5f; --line:#d5dccf;
   --accent:#cf4f17; --accent-soft:#f6e3d8;
-  --forest:#2e7a3c; --degraded:#a3c23d; --soil:#e7e1d2; --burned:#3b3330; --break:#8b6b44; --saved:#9ba5a1; --fighter:#1f5fd1; --rain:#2b8fb3;
+  --forest:#2e7a3c; --degraded:#a3c23d; --soil:#e7e1d2; --burned:#3b3330; --break:#8b6b44; --saved:#9ba5a1; --fighter:#1f5fd1; --rain:#2b8fb3; --secondary:#6f9f45; --pasture:#d8c779;
   --display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
   --body:"IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
   --mono:"IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
@@ -17,12 +17,12 @@
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --bg:#0f1510; --surface:#172019; --ink:#e5ece3; --muted:#98a79b; --line:#2b372d;
   --accent:#f2763c; --accent-soft:#3a2418;
-  --forest:#3f9a4f; --degraded:#b6d655; --soil:#2a2721; --burned:#090807; --break:#a5834f; --saved:#5d6764; --fighter:#5b93ff; --rain:#4cb3d6;
+  --forest:#3f9a4f; --degraded:#b6d655; --soil:#2a2721; --burned:#090807; --break:#a5834f; --saved:#5d6764; --fighter:#5b93ff; --rain:#4cb3d6; --secondary:#7aae52; --pasture:#a8975a;
   color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#0f1510; --surface:#172019; --ink:#e5ece3; --muted:#98a79b; --line:#2b372d;
   --accent:#f2763c; --accent-soft:#3a2418;
-  --forest:#3f9a4f; --degraded:#b6d655; --soil:#2a2721; --burned:#090807; --break:#a5834f; --saved:#5d6764; --fighter:#5b93ff; --rain:#4cb3d6;
+  --forest:#3f9a4f; --degraded:#b6d655; --soil:#2a2721; --burned:#090807; --break:#a5834f; --saved:#5d6764; --fighter:#5b93ff; --rain:#4cb3d6; --secondary:#7aae52; --pasture:#a8975a;
   color-scheme:dark}
 *{box-sizing:border-box}
 body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5}
@@ -48,6 +48,10 @@ h2{font-family:var(--display);font-weight:600;font-size:22px;margin:0;text-wrap:
 .duo{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}
 @media (max-width:860px){.bench,.duo{grid-template-columns:1fr}}
 .panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px;display:grid;gap:14px;min-width:0;align-content:start}
+canvas#abwCanvas{width:100%;max-width:100%;aspect-ratio:3/2;display:block;border-radius:6px;cursor:crosshair;background:var(--soil)}
+ol.rules{margin:0;padding-left:20px;display:grid;gap:6px;font-size:14px}
+h3.sub{margin:6px 0 0;font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+table.crit td:first-child{font-weight:600;width:34%}
 canvas#world{width:100%;max-width:100%;aspect-ratio:1/1;display:block;border-radius:6px;image-rendering:pixelated;background:var(--soil)}
 .legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12.5px;color:var(--muted)}
 .legend span{display:inline-flex;align-items:center;gap:6px}
@@ -120,8 +124,8 @@ td.num,th.num{text-align:right;font-family:var(--mono);font-variant-numeric:tabu
    <div style="display:grid;gap:6px;min-width:0">
     <div class="eyebrow">WWF wildfire risk · Amazon · three simulation methods</div>
     <h1>Amazon Fire Lab</h1>
-    <p class="lede">One problem, three lenses. The agent-based model shows how a single fire spreads through the landscape. The system dynamics model shows where the forest is heading until 2100. The discrete event model shows whether fire brigades can keep up during the fire season.</p>
-    <p class="credit">Agent-based core: Wilensky, U. (1997). <a href="https://ccl.northwestern.edu/netlogo/models/Fire" target="_blank" rel="noopener">NetLogo Fire model</a>, CCL, Northwestern University; re-implemented and extended (degraded forest, drought, wind, spread speed, ignition types, rain, protected territory, firefighter agents, firebreak). System dynamics and discrete event models: own stylized models; parameters are illustrative assumptions, not calibrated forecasts. Context figures: Flores et al. (2024), Nature; Lovejoy &amp; Nobre (2018), Science Advances.</p>
+    <p class="lede">One problem, several lenses. The agent-based model lets mobile fire agents form a fire front under wind and drought. The cellular automaton shows when a fire crosses the whole landscape. The system dynamics model shows where the forest is heading until 2100. The discrete event model shows whether fire brigades can keep up during the fire season.</p>
+    <p class="credit">Agent-based model: JavaScript re-implementation of ABWiSE v1.0 – Katan, J., &amp; Perez, L. (2021). <a href="https://nhess.copernicus.org/articles/21/3141/2021/" target="_blank" rel="noopener">ABWiSE v1.0: toward an agent-based approach to simulating wildfire spread</a>, <i>Natural Hazards and Earth System Sciences, 21</i>, 3141–3160 (code CC BY 4.0) – applied to a stylised Amazon landscape. Cellular automaton: extends Wilensky, U. (1997). <a href="https://ccl.northwestern.edu/netlogo/models/Fire" target="_blank" rel="noopener">NetLogo Fire model</a>, CCL, Northwestern University (CC BY-NC-SA 3.0), with an agent-based fire-brigade layer. System dynamics and discrete event models: own stylised models. All Amazon parameters are illustrative assumptions, not calibrated forecasts. Context figures: Flores et al. (2024), Nature; Lovejoy &amp; Nobre (2018), Science Advances.</p>
    </div>
    <aside class="share" aria-label="Open on your phone">
      <div class="qrbox" id="qrSmall"></div>
@@ -135,15 +139,127 @@ td.num,th.num{text-align:right;font-family:var(--mono);font-variant-numeric:tabu
   </div>
 
   <nav class="tabs" role="tablist" aria-label="Simulation method">
-    <button class="tab" role="tab" id="tab-abm" aria-controls="view-abm" aria-selected="true"><small>Agent-based</small><b>Fire spread</b></button>
+    <button class="tab" role="tab" id="tab-abw" aria-controls="view-abw" aria-selected="true"><small>Agent-based</small><b>Fire agents (ABWiSE)</b></button>
+    <button class="tab" role="tab" id="tab-abm" aria-controls="view-abm" aria-selected="false"><small>Cellular automaton</small><b>Fire spread (NetLogo)</b></button>
     <button class="tab" role="tab" id="tab-sd" aria-controls="view-sd" aria-selected="false"><small>System dynamics</small><b>Forest until 2100</b></button>
     <button class="tab" role="tab" id="tab-des" aria-controls="view-des" aria-selected="false"><small>Discrete event</small><b>Brigade dispatch</b></button>
     <button class="tab" role="tab" id="tab-cmp" aria-controls="view-cmp" aria-selected="false"><small>Synthesis</small><b>Compare methods</b></button>
   </nav>
 
   <!-- ===================== ABM ===================== -->
-  <section class="view" id="view-abm" role="tabpanel" aria-labelledby="tab-abm">
-    <p class="question"><span>Question · individual level · hours to days</span>How does one fire spread through intact and degraded forest, and which local measures stop it?</p>
+  <!-- ===================== ABM: ABWiSE fire agents ===================== -->
+  <section class="view" id="view-abw" role="tabpanel" aria-labelledby="tab-abw">
+    <p class="question"><span>Question · individual agents · minutes to hours</span>How do fire agents, wind and vegetation interact to shape a fire front, and how much faster does it run through degraded forest in a drought?</p>
+    <div class="bench">
+      <div class="panel">
+        <canvas id="abwCanvas" width="768" height="512" aria-label="Agent-based fire spread with mobile fire agents"></canvas>
+        <div class="legend">
+          <span><i class="sw" style="background:var(--forest)"></i>Intact rainforest</span>
+          <span><i class="sw" style="background:var(--degraded)"></i>Degraded forest</span>
+          <span><i class="sw" style="background:var(--secondary)"></i>Secondary regrowth</span>
+          <span><i class="sw" style="background:var(--pasture)"></i>Pasture</span>
+          <span><i class="sw" style="background:var(--rain)"></i>River</span>
+          <span><i class="sw" style="background:var(--break)"></i>Road / firebreak</span>
+          <span><i class="sw" style="background:var(--burned)"></i>Burned (darker = less fuel left)</span>
+          <span><i class="sw" style="background:var(--accent);border-radius:50%"></i>Fire agent (line = heading)</span>
+        </div>
+        <p class="note">Click the map to start an extra fire. The arrow at the top right shows where the wind blows.</p>
+      </div>
+
+      <div class="panel">
+        <div class="stats">
+          <div class="stat hot"><small>Burned area</small><b id="abBurned">0 ha</b></div>
+          <div class="stat"><small>Time</small><b id="abTime">0:00</b></div>
+          <div class="stat"><small>Fire agents</small><b id="abAgents">0</b></div>
+          <div class="stat"><small>Mean spread</small><b id="abRoS">0 m/min</b></div>
+        </div>
+        <div class="btns">
+          <button id="abSetup">Setup</button>
+          <button id="abGo" class="primary">Go</button>
+          <button id="abStep">Step</button>
+          <span class="pill" id="abState">ready</span>
+          <span class="status">Ember jumps: <span id="abSpots">0</span></span>
+        </div>
+        <svg id="abChart" class="chart" viewBox="0 0 420 140" role="img" aria-label="Burned area over time"></svg>
+
+        <div class="group">
+          <h3>Scenario presets</h3>
+          <div class="presets" id="abPresets"></div>
+          <p class="note" id="abPresetNote">Pick a preset or move the sliders.</p>
+        </div>
+        <div class="group">
+          <h3>Fire behaviour</h3>
+          <div class="ctrl star"><label for="abwM1"><span>Fire spread speed (m1)</span><span id="vabwM1"></span></label><input type="range" id="abwM1" min="0.1" max="0.4" step="0.01" value="0.2">
+            <div class="hint">ABWiSE rate-of-spread multiplier; 0.20 is the calibrated value.</div></div>
+          <div class="ctrl star"><label for="abwTps"><span>Animation speed</span><span id="vabwTps"></span></label><input type="range" id="abwTps" min="1" max="60" value="20">
+            <div class="hint">Only how fast you watch it; does not change the result.</div></div>
+          <div class="ctrl"><label for="abwIgn"><span>Ignition</span><span></span></label>
+            <select id="abwIgn">
+              <option value="frontier">Pasture burns escape at the frontier (3 fires)</option>
+              <option value="scattered">5 random fires</option>
+              <option value="center">One fire in the forest centre</option>
+              <option value="none">None – click the map</option>
+            </select></div>
+          <label class="switch" for="abwSpot"><input type="checkbox" id="abwSpot"> Ember spotting (fires jump ahead in strong wind)</label>
+          <div class="ctrl"><label for="abwStop"><span>Duration</span><span id="vabwStop"></span></label><input type="range" id="abwStop" min="60" max="600" step="30" value="360"></div>
+        </div>
+        <div class="group">
+          <h3>Weather</h3>
+          <div class="ctrl"><label for="abwWind"><span>Wind speed</span><span id="vabwWind"></span></label><input type="range" id="abwWind" min="1" max="60" value="15"></div>
+          <div class="ctrl"><label for="abwDir"><span>Wind blows towards</span><span id="vabwDir"></span></label><input type="range" id="abwDir" min="0" max="355" step="5" value="90"></div>
+          <div class="ctrl"><label for="abwDrought"><span>Drought</span><span id="vabwDrought"></span></label><input type="range" id="abwDrought" min="0" max="100" value="40">
+            <div class="hint">Raises the flammability of all vegetation, most in intact forest.</div></div>
+        </div>
+        <div class="group">
+          <h3>Landscape and WWF levers</h3>
+          <div class="ctrl"><label for="abwDeg"><span>Degraded forest (restoration lowers it)</span><span id="vabwDeg"></span></label><input type="range" id="abwDeg" min="0" max="100" value="30"></div>
+          <label class="switch" for="abwFb"><input type="checkbox" id="abwFb"> Firebreak road through the forest</label>
+          <label class="switch" for="abwRiver"><input type="checkbox" id="abwRiver" checked> River (natural barrier)</label>
+          <label class="switch" for="abwHills"><input type="checkbox" id="abwHills"> Hilly terrain (fire runs faster uphill)</label>
+        </div>
+        <p class="note">Changing a setting builds a new landscape. Speed and duration apply immediately.</p>
+      </div>
+    </div>
+
+    <div class="duo">
+      <div class="panel">
+        <h2>How the fire agents work</h2>
+        <ol class="rules">
+          <li>An ignition creates four fire agents facing north, east, south and west. Each starts with a rate of spread equal to the flammability of its cell.</li>
+          <li><b>Fire–atmosphere feedback:</b> around the agents, the local wind mixes the global wind with the fire's own draught and is smoothed over neighbouring cells.</li>
+          <li>Each agent updates its <b>rate of spread and heading</b> from flammability, wind, slope and how many other agents are close by.</li>
+          <li>It <b>moves</b>; with spotting on, it can jump ahead and start a new fire.</li>
+          <li>It <b>pre-heats</b> the cell ahead, which becomes more flammable.</li>
+          <li>Agents in burnt-out or non-fuel cells (river, road) <b>die</b>.</li>
+          <li>An agent that has travelled far enough into a new cell, with fewer than 3 agents there, <b>splits into three</b> (−45°, 0°, +45°).</li>
+          <li>Agents <b>consume fuel</b>. The shape of the fire front emerges from all agents together.</li>
+        </ol>
+        <h3 class="sub">Why this is agent-based (Unit 3 definition)</h3>
+        <div class="tablewrap"><table class="crit"><tbody>
+          <tr><td>Individual objects that are created and destroyed</td><td>Fire agents are born (ignition, splitting, spotting) and die</td><td class="num">✓</td></tr>
+          <tr><td>Own state plus decision rules</td><td>Each agent keeps its rate of spread, heading and local density and updates them itself</td><td class="num">✓</td></tr>
+          <tr><td>Local interaction between agents</td><td>Agents react to nearby agents (density) and jointly shape the local wind</td><td class="num">✓</td></tr>
+          <tr><td>Environment the agents interact with</td><td>They read vegetation, wind and slope, and change it (pre-heating, fuel use)</td><td class="num">✓</td></tr>
+          <tr><td>Space and synchronous time</td><td>Continuous positions on a 96 × 64 landscape; 1 tick = 1 minute</td><td class="num">✓</td></tr>
+          <tr><td>Emergent global behaviour</td><td>The elongated, wind-driven fire front is not programmed; it emerges</td><td class="num">✓</td></tr>
+          <tr><td>Agents remember and learn</td><td>No memory or learning; fire is a physical process, not a decision-maker</td><td class="num">✗</td></tr>
+        </tbody></table></div>
+      </div>
+      <div class="panel">
+        <h2>Monte Carlo experiment</h2>
+        <p class="note">The model is stochastic, so every preset runs 5 times for 4 hours. Bars show the mean burned area, lines the range. Runs in the background and takes about a minute.</p>
+        <svg id="abMc" class="chart" viewBox="0 0 460 300" role="img" aria-label="Burned area by scenario"></svg>
+        <div class="btns"><button id="abMcRun">Run experiment</button><span class="status" id="abMcStatus">Not run yet</span></div>
+        <h3 class="sub">Parameters</h3>
+        <div class="tablewrap"><table><thead><tr><th>Fuel type</th><th class="num">Fuel</th><th class="num">Flammability</th><th class="num">+ drought</th></tr></thead><tbody id="abFuelTable"></tbody></table></div>
+        <p class="note">Agent parameters as calibrated in ABWiSE: a = 0.57, b = 180, k = 16, f1 = 0.2, f2 = 0.81, w1 = 0.44, w2 = 0.24, w3 = 4.2, s1 = 0.019, m1 = 0.2, d1 = 2.5, burn scaler = 17. They were calibrated on the Dogrib fire in Canada. The Amazon fuel values above are our stylised assumptions, with flammability values taken from comparable ABWiSE fuel classes; 1 cell = 50 m.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="view" id="view-abm" role="tabpanel" aria-labelledby="tab-abm" hidden>
+    <p class="question"><span>Question · cell level · hours to days</span>When does a fire cross the whole landscape, and which local measures stop it?</p>
+    <p class="note">Method: stochastic cellular automaton (extends Wilensky, 1997) – burning cells ignite their four neighbours – with an agent-based layer of fire brigades that move to the nearest fire and put it out.</p>
     <div class="bench">
       <div class="panel">
         <canvas id="world" width="606" height="606" aria-label="Forest grid simulation"></canvas>
@@ -161,7 +277,7 @@ td.num,th.num{text-align:right;font-family:var(--mono);font-variant-numeric:tabu
 
       <div class="panel">
         <div class="stats">
-          <div class="stat hot"><small>Burned</small><b id="sBurned">0.0%</b></div>
+          <div class="stat hot"><small>Burned (net)</small><b id="sBurned">0.0%</b></div>
           <div class="stat"><small>Tick</small><b id="sTick">0</b></div>
           <div class="stat"><small>Active fires</small><b id="sFires">0</b></div>
           <div class="stat"><small>Extinguished</small><b id="sSaved">0</b></div>
@@ -202,7 +318,7 @@ td.num,th.num{text-align:right;font-family:var(--mono);font-variant-numeric:tabu
           <h3>Climate</h3>
           <div class="ctrl"><label for="drought"><span>Drought</span><span id="vdrought"></span></label><input type="range" id="drought" min="0" max="100" value="30">
             <div class="hint">Base spread chance: intact 60 + 0.35 × drought %, degraded 85 + 0.15 × drought %</div></div>
-          <div class="ctrl"><label for="wind"><span>Wind (ember jump 2 cells east)</span><span id="vwind"></span></label><input type="range" id="wind" min="0" max="100" value="10"></div>
+          <div class="ctrl"><label for="wind"><span>Wind (ember jump 2–3 cells east)</span><span id="vwind"></span></label><input type="range" id="wind" min="0" max="100" value="10"></div>
           <div class="ctrl"><label for="rain"><span>Rain arrives at tick</span><span id="vrain"></span></label><input type="range" id="rain" min="0" max="150" step="5" value="0">
             <div class="hint">Rain puts out 70 % of active fires and halves spread afterwards. 0 = no rain.</div></div>
         </div>
@@ -269,7 +385,7 @@ td.num,th.num{text-align:right;font-family:var(--mono);font-variant-numeric:tabu
           <div class="ctrl"><label for="sdRest"><span>Restoration of degraded forest</span><span id="vsdRest"></span></label><input type="range" id="sdRest" min="0" max="3" step="0.1" value="0"></div>
           <div class="ctrl"><label for="sdFm"><span>Fire management (fewer fires)</span><span id="vsdFm"></span></label><input type="range" id="sdFm" min="0" max="80" step="5" value="0"></div>
         </div>
-        <p class="note">Start values 2025: 74 % intact, 6 % degraded, 20 % cleared (Flores et al. 2024). Tipping when the rainfall index falls below 0.68; after that, dieback turns forest into savanna.</p>
+        <p class="note">Start values 2025 after Flores et al. (2024): about 15 % deforested and 17 % of the remaining forest degraded (71 % intact, 14 % degraded, 15 % cleared). Tipping when the rainfall index falls below 0.68; after that, dieback turns forest into savanna.</p>
       </div>
     </div>
     <div class="duo">
@@ -353,24 +469,24 @@ td.num,th.num{text-align:right;font-family:var(--mono);font-variant-numeric:tabu
     <p class="question"><span>Synthesis</span>Which method answers which WWF question?</p>
     <div class="panel">
       <div class="tablewrap"><table>
-        <thead><tr><th></th><th>Agent-based (ABM)</th><th>System dynamics (SD)</th><th>Discrete event (DES)</th></tr></thead>
+        <thead><tr><th></th><th>Agent-based (ABWiSE)</th><th>Cellular automaton + brigades</th><th>System dynamics (SD)</th><th>Discrete event (DES)</th></tr></thead>
         <tbody>
-          <tr><td>WWF question</td><td>How does a fire spread and which local measures stop it?</td><td>Does the Amazon cross its tipping point by 2100?</td><td>How many brigades are needed in the fire season?</td></tr>
-          <tr><td>Level</td><td>Individual cells and brigades</td><td>Aggregate stocks (cohort)</td><td>Individual alerts in a process</td></tr>
-          <tr><td>Abstraction</td><td>Low · operational</td><td>High · strategic</td><td>Medium · tactical/operational</td></tr>
-          <tr><td>Time</td><td>Time slicing (ticks)</td><td>Continuous (numerical integration, dt = 0.25 y)</td><td>Next-event technique</td></tr>
-          <tr><td>Randomness</td><td>Stochastic</td><td>Deterministic</td><td>Stochastic</td></tr>
-          <tr><td>Key mechanism</td><td>Emergence from local rules</td><td>Feedback loops (R1, R2, B1)</td><td>Queues and limited resources</td></tr>
-          <tr><td>Main output</td><td>Burned share, threshold cover</td><td>Forest cover, tipping year</td><td>Waiting time, utilisation</td></tr>
-          <tr><td>Limitation</td><td>Stylized grid, no real map</td><td>Aggregated, no spatial detail</td><td>No fire physics</td></tr>
+          <tr><td>WWF question</td><td>How do wind, drought and degraded forest shape a fire front?</td><td>When does a fire cross the landscape, and which local measures stop it?</td><td>Does the Amazon cross its tipping point by 2100?</td><td>How many brigades are needed in the fire season?</td></tr>
+          <tr><td>Level</td><td>Individual mobile fire agents</td><td>Individual cells + brigade agents</td><td>Aggregate stocks (cohort)</td><td>Individual alerts in a process</td></tr>
+          <tr><td>Abstraction</td><td>Low · operational (minutes)</td><td>Low · operational</td><td>High · strategic</td><td>Medium · tactical/operational</td></tr>
+          <tr><td>Time</td><td>Time slicing (1 tick = 1 minute)</td><td>Time slicing (ticks)</td><td>Continuous (numerical integration, dt = 0.25 y)</td><td>Next-event technique</td></tr>
+          <tr><td>Randomness</td><td>Stochastic</td><td>Stochastic</td><td>Deterministic</td><td>Stochastic</td></tr>
+          <tr><td>Key mechanism</td><td>Agent interaction and fire–wind feedback → emergent front</td><td>Neighbour rule → percolation threshold</td><td>Feedback loops (R1, R2, B1)</td><td>Queues and limited resources</td></tr>
+          <tr><td>Main output</td><td>Burned area, front shape, rate of spread</td><td>Burned share, threshold cover</td><td>Forest cover, tipping year</td><td>Waiting time, utilisation</td></tr>
+          <tr><td>Limitation</td><td>Calibrated in Canada; Amazon fuels stylised; no human decision-makers</td><td>Brigades identical and fully informed; no human decisions</td><td>Aggregated, no spatial detail</td><td>No fire physics</td></tr>
         </tbody>
       </table></div>
     </div>
     <div class="panel">
       <h2>Multi-method view</h2>
       <div class="chain">
-        <div><small>DES → ABM</small><b>Response time</b><span class="note">Waiting time from the dispatch model becomes the brigade response delay in the fire spread model.</span></div>
-        <div><small>ABM → SD</small><b>Burned share</b><span class="note">Burned share per fire season feeds the fire flow from intact to degraded forest.</span></div>
+        <div><small>DES → fire models</small><b>Response time</b><span class="note">Waiting time from the dispatch model becomes the brigade response delay in the fire spread models.</span></div>
+        <div><small>Fire models → SD</small><b>Burned share</b><span class="note">Burned share per fire season feeds the fire flow from intact to degraded forest.</span></div>
         <div><small>SD → DES</small><b>Fire alerts</b><span class="note">Lower rainfall and more degraded forest raise the number of fire alerts per day.</span></div>
       </div>
       <p class="note">Coupling the three methods is what Unit 1 calls multi-method simulation modelling. In this dashboard the models run separately; the links show how a hybrid model would connect them.</p>
@@ -379,6 +495,226 @@ td.num,th.num{text-align:right;font-family:var(--mono);font-variant-numeric:tabu
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script id="abwiseSrc">
+// ===== ABWISE-START =====
+// JavaScript re-implementation of ABWiSE v1.0 (Katan & Perez 2021, NHESS 21:3141-3160;
+// code: github.com/JeffLEDGE/ABWiSE-Fire-spread-model, CC BY 4.0), adapted to a synthetic Amazon landscape.
+// Fire = mobile fire agents (rate of spread RoS, heading) that interact with each other (density),
+// with the vegetation (flammability, fuel, pre-heating) and with a local wind field (fire-atmosphere feedback).
+const AB = {
+  W: 96, H: 64,
+  // calibrated parameters from the ABWiSE interface defaults
+  P: { a:0.57, b:180, k:16, f1:0.2, f2:0.81, w1:0.44, w2:0.24, w3:4.2, s1:0.019, m1:0.2, d1:2.5, burnscaler:17 },
+  T: { INTACT:0, DEGRADED:1, SECONDARY:2, PASTURE:3, WATER:4, NONFUEL:5 },
+  // stylised Amazon fuel table (fuel, base flammability, drought sensitivity); analogues of ABWiSE FBP classes
+  FUEL: [
+    { name:"Intact rainforest",  fuel:0.5, flam:0.10, dry:0.45 },  // like D-1 deciduous (0.1)
+    { name:"Degraded forest",    fuel:0.5, flam:0.60, dry:0.30 },  // like M-1 mixedwood (0.6)
+    { name:"Secondary regrowth", fuel:0.5, flam:0.45, dry:0.35 },  // like C-1 (0.5)
+    { name:"Pasture / grass",    fuel:0.4, flam:0.60, dry:0.25 },  // ABWiSE O-1 grass (0.4 / 0.6)
+    { name:"River",              fuel:0,   flam:0,    dry:0 },
+    { name:"Road / firebreak",   fuel:0,   flam:0,    dry:0 },
+  ],
+};
+
+function abRand(n){ return Math.floor(Math.random()*n); }
+function abDeg(r){ return r*180/Math.PI; }
+function abRad(d){ return d*Math.PI/180; }
+function abHeading(x,y){ let h=abDeg(Math.atan2(x,y)); if(h<0)h+=360; return h; }       // NetLogo atan x y
+function abSubH(h1,h2){ let d=((h1-h2)%360+540)%360-180; return d; }                       // subtract-headings
+
+function abMakeLandscape(q){
+  const {W,H,T,FUEL}=AB, N=W*H;
+  const type=new Uint8Array(N), fuel=new Float32Array(N), flam=new Float32Array(N), elev=new Float32Array(N);
+  // agricultural frontier: jagged boundary on the left
+  const front=new Int16Array(H); let fx=Math.round(W*0.2);
+  for (let y=0;y<H;y++){ fx+=abRand(3)-1; fx=Math.max(Math.round(W*0.12),Math.min(Math.round(W*0.28),fx)); front[y]=fx; }
+  for (let y=0;y<H;y++) for (let x=0;x<W;x++){
+    const i=y*W+x;
+    if (x<front[y]) type[i] = Math.random()<0.12 ? T.SECONDARY : T.PASTURE;
+    else type[i]=T.INTACT;
+  }
+  // edge degradation next to pasture + random logging patches, scaled by degradation share
+  const deg=q.degradation/100;
+  for (let y=0;y<H;y++) for (let x=0;x<W;x++){
+    const i=y*W+x; if (type[i]!==T.INTACT) continue;
+    const d=x-front[y];
+    if (d < 2+Math.round(8*deg) && Math.random()<0.85) type[i]=T.DEGRADED;
+  }
+  const nPatches=Math.round(30*deg);
+  for (let k=0;k<nPatches;k++){
+    const cx=front[0]+5+abRand(W-front[0]-10), cy=abRand(H), r=2+abRand(4);
+    for (let y=cy-r;y<=cy+r;y++) for (let x=cx-r;x<=cx+r;x++){
+      if (x<0||y<0||x>=W||y>=H) continue; const i=y*W+x;
+      if (type[i]===T.INTACT && (x-cx)**2+(y-cy)**2<=r*r && Math.random()<0.8) type[i]=T.DEGRADED;
+    }
+  }
+  if (q.river){ let rx=Math.round(W*0.68);
+    for (let y=0;y<H;y++){ rx+=abRand(3)-1; for (let w=0;w<2;w++){ const x=rx+w; if(x>=0&&x<W) type[y*W+x]=T.WATER; } } }
+  if (q.firebreak){ const bx=Math.round(W*0.45); for (let y=0;y<H;y++) for (let w=0;w<2;w++) type[y*W+bx+w]=T.NONFUEL; }
+  // terrain: flat or gentle hills (smooth sum of sines)
+  const ph=[Math.random()*6,Math.random()*6,Math.random()*6,Math.random()*6];
+  for (let y=0;y<H;y++) for (let x=0;x<W;x++)
+    elev[y*W+x] = q.hills ? 30*(Math.sin(x/9+ph[0])*Math.cos(y/7+ph[1]) + 0.6*Math.sin(x/5+y/6+ph[2])) : 0;
+  const dr=q.drought/100;
+  for (let i=0;i<N;i++){ const f=FUEL[type[i]]; fuel[i]=f.fuel; flam[i]= f.flam>0 ? Math.min(0.95, f.flam + f.dry*dr) : 0; }
+  // slope (%) and aspect (downslope direction, NetLogo heading) from elevation, cell = 50 m
+  const slope=new Float32Array(N), aspect=new Float32Array(N);
+  for (let y=0;y<H;y++) for (let x=0;x<W;x++){
+    const e=(xx,yy)=>elev[Math.min(H-1,Math.max(0,yy))*W+Math.min(W-1,Math.max(0,xx))];
+    const gx=(e(x+1,y)-e(x-1,y))/100, gy=(e(x,y+1)-e(x,y-1))/100;   // rise per metre (y up = north)
+    slope[y*W+x]=100*Math.hypot(gx,gy);
+    aspect[y*W+x]=abHeading(-gx,-gy);                                 // aspect = direction the slope faces (downhill)
+  }
+  return {type,fuel,flam,slope,aspect,elev,front};
+}
+
+function abMakeSim(q){
+  const {W,H}=AB, N=W*H, L=abMakeLandscape(q);
+  const s={ q, W, H, ...L, tick:0, fires:[], spots:0, born:0,
+    burned:new Uint8Array(N), arrival:new Int16Array(N).fill(-1),
+    windX:new Float32Array(N), windY:new Float32Array(N), fireX:new Float32Array(N), fireY:new Float32Array(N),
+    windspe:new Float32Array(N), winddir:new Float32Array(N),
+    cnt:new Uint16Array(N), rosSum:new Float32Array(N), maxDensity:0,
+    burnable:0, history:[], agentsHist:[], rosHist:[] };
+  for (let i=0;i<N;i++) if (s.flam[i]>0) s.burnable++;
+  // ignition
+  const ign=[];
+  if (q.ignition==="frontier"){ for (let k=0;k<3;k++){ const y=Math.round(H*(0.25+0.25*k)); ign.push([s.front[y]-2,y]); } }
+  else if (q.ignition==="center"){ ign.push([Math.round(W*0.5),Math.round(H*0.5)]); }
+  else if (q.ignition==="scattered"){ for (let k=0;k<5;k++) ign.push([abRand(W),abRand(H)]); }
+  for (const [x,y] of ign) abIgnite(s,x,y);
+  abRecord(s);
+  return s;
+}
+function abIdx(s,x,y){ const px=Math.round(x), py=Math.round(y); if(px<0||py<0||px>=s.W||py>=s.H) return -1; return py*s.W+px; }
+function abIgnite(s,px,py){
+  const i=abIdx(s,px,py); if (i<0) return;
+  for (const h of [0,90,180,270]){
+    const r=h*Math.PI/180;
+    s.fires.push({x:px+Math.sin(r)*1e-5, y:py+Math.cos(r)*1e-5, h, RoS:s.flam[i], cx:px, cy:py, density:0, alive:true});
+    s.born++;
+  }
+}
+function abRecord(s){
+  let b=0; for (let i=0;i<s.burned.length;i++) b+=s.burned[i];
+  s.history.push(b/Math.max(1,s.burnable)*100); s.agentsHist.push(s.fires.length);
+  let r=0; for (const f of s.fires) r+=f.RoS; s.rosHist.push(s.fires.length? r/s.fires.length : 0);
+}
+function abDone(s){ return s.fires.length===0 || s.tick>=s.q.stoptime; }
+
+function abStep(s){
+  if (abDone(s)) return false;
+  s.tick++;
+  const W=s.W, H=s.H, N=W*H, P=Object.assign({},AB.P, s.q.m1?{m1:s.q.m1}:{});
+  // --- per-patch fire counts and RoS sums
+  s.cnt.fill(0); s.rosSum.fill(0);
+  for (const f of s.fires){ const i=abIdx(s,f.x,f.y); if(i>=0){ s.cnt[i]++; s.rosSum[i]+=f.RoS; } }
+  // --- wind-calc: active cells (fires within 4) and active wind patches (fires within 6)
+  const act=new Uint8Array(N); // 1 = active-wind, 2 = active-cell (and wind)
+  for (const f of s.fires){
+    const px=Math.round(f.x), py=Math.round(f.y);
+    for (let dy=-6;dy<=6;dy++) for (let dx=-6;dx<=6;dx++){
+      const x=px+dx, y=py+dy; if(x<0||y<0||x>=W||y>=H) continue;
+      const d2=(x-f.x)**2+(y-f.y)**2; const i=y*W+x;
+      if (d2<=16) act[i]=2; else if (d2<=36 && act[i]===0) act[i]=1;
+    }
+  }
+  const ws=s.q.windSpeed, wd=s.q.windDir;
+  const gX=Math.sin(abRad(wd))*ws/60, gY=Math.cos(abRad(wd))*ws/60;
+  const windList=[], cellList=[];
+  for (let i=0;i<N;i++) if (act[i]){ windList.push(i); if(act[i]===2) cellList.push(i);
+    s.windX[i]=P.w1*gX+(1-P.w1)*(P.w2*s.windX[i]+(1-P.w2)*s.fireX[i]);
+    s.windY[i]=P.w1*gY+(1-P.w1)*(P.w2*s.windY[i]+(1-P.w2)*s.fireY[i]); }
+  // fires bucketed by patch for neighbourhood queries
+  const bucket=new Map();
+  for (let k=0;k<s.fires.length;k++){ const i=abIdx(s,s.fires[k].x,s.fires[k].y); if(i<0)continue; let a=bucket.get(i); if(!a){a=[];bucket.set(i,a);} a.push(k); }
+  const firesNear=(x,y,r)=>{ const out=[]; const px=Math.round(x),py=Math.round(y), R=Math.ceil(r)+1;
+    for (let dy=-R;dy<=R;dy++) for (let dx=-R;dx<=R;dx++){ const xx=px+dx,yy=py+dy; if(xx<0||yy<0||xx>=W||yy>=H) continue;
+      const a=bucket.get(yy*W+xx); if(!a) continue; for (const k of a){ const f=s.fires[k]; if((f.x-x)**2+(f.y-y)**2<=r*r) out.push(f); } } return out; };
+  // shuffle active cells (NetLogo asks in random order)
+  for (let k=cellList.length-1;k>0;k--){ const j=abRand(k+1); [cellList[k],cellList[j]]=[cellList[j],cellList[k]]; }
+  for (const i of cellList){
+    const cx=i%W, cy=(i/W)|0;
+    // fIDW: fire vector interpolated from fires within radius 1
+    let ss=0, sc=0, den=0;
+    for (const f of firesNear(cx,cy,1)){ const d2=Math.max(1e-6,(f.x-cx)**2+(f.y-cy)**2); const r=abRad(f.h);
+      ss+=Math.sin(r)*f.RoS/d2; sc+=Math.cos(r)*f.RoS/d2; den+=1/d2; }
+    if (den!==0){ s.fireX[i]=ss/den; s.fireY[i]=sc/den; }
+    // fSlope-Aspect: Sobel gradient of fire RoS density around a burning cell
+    if (s.cnt[i]>0){
+      const here=s.rosSum[i];
+      const p=(dx,dy)=>{ const x=cx+dx,y=cy+dy; if(x<0||y<0||x>=W||y>=H) return here; const j=y*W+x; return s.cnt[j]>0? s.rosSum[j] : here; };
+      const p1=p(-1,1),p2=p(0,1),p3=p(1,1),p4=p(-1,0),p6=p(1,0),p7=p(-1,-1),p8=p(0,-1),p9=p(1,-1);
+      const xs=((p3+2*p6+p9)-(p1+2*p4+p7))/8, ys=((p1+2*p2+p3)-(p7+2*p8+p9))/8;
+      s.fireX[i]+=3*xs; s.fireY[i]+=3*ys;
+    }
+    // wIDW: wind smoothed from surrounding active-wind patches (truncated at radius 6)
+    let sx=0, sy=0, dn=0;
+    for (let dy=-6;dy<=6;dy++) for (let dx=-6;dx<=6;dx++){ if(!dx&&!dy) continue; const x=cx+dx,y=cy+dy; if(x<0||y<0||x>=W||y>=H) continue;
+      const j=y*W+x; if(!act[j]) continue; const d2=dx*dx+dy*dy; if (d2>36) continue; sx+=s.windX[j]/d2; sy+=s.windY[j]/d2; dn+=1/d2; }
+    if (dn!==0){ s.windX[i]=sx/dn; s.windY[i]=sy/dn; }
+  }
+  for (const i of windList){
+    if (s.windX[i]===0 || s.windY[i]===0){ s.winddir[i]=abHeading(gX,gY); s.windspe[i]=Math.hypot(gX,gY); }
+    else { s.winddir[i]=abHeading(s.windX[i],s.windY[i]); s.windspe[i]=Math.hypot(s.windX[i],s.windY[i]); }
+  }
+  // --- spread (fires in random order)
+  let maxD=0; for (const f of s.fires) if (f.density>maxD) maxD=f.density;
+  const order=s.fires.slice(); for (let k=order.length-1;k>0;k--){ const j=abRand(k+1); [order[k],order[j]]=[order[j],order[k]]; }
+  const born=[]; const nNow=order.length;
+  for (const f of order){
+    if (!f.alive) continue;
+    const i=abIdx(s,f.x,f.y); if (i<0){ f.alive=false; continue; }
+    const flam=s.flam[i], slope=s.slope[i], aspect=s.aspect[i], wspe=s.windspe[i], wdir=s.winddir[i];
+    const col=Math.cos(abRad(abSubH(f.h,wdir)));
+    const coslope=Math.cos(abRad(abSubH(f.h,aspect-180)));
+    const sur=firesNear(f.x,f.y,1).filter(g=>g.alive);
+    f.density=sur.length;
+    const near=sur.reduce((a,g)=>a+g.density,0)/Math.max(1,sur.length);
+    const densMod=(f.density+1)/(maxD+1)-(near+1)/(maxD+1);
+    const windmod=(P.a+flam/30)/Math.pow(1+P.b*Math.exp(-P.k*wspe), 1/(flam+(2.6+f.RoS)));
+    f.RoS=(P.f1*f.RoS+(1-P.f1)*(Math.pow(flam,1.3)+flam+P.w3*wspe*Math.abs(col))+P.s1*slope/100*coslope)*(P.m1*windmod);
+    const f22=P.f2*(1.2-windmod/1.3), hr=abRad(f.h), ar=abRad(aspect-180);
+    const Cx=f.RoS*Math.sin(hr)*f22*(1+densMod*P.d1)+s.windX[i]*(1.05-f22)*windmod+P.s1*slope/100*Math.sin(ar);
+    const Cy=f.RoS*Math.cos(hr)*f22*(1+densMod*P.d1)+s.windY[i]*(1.05-f22)*windmod+P.s1*slope/100*Math.cos(ar);
+    f.h=abHeading(Cx,Cy); f.RoS=Math.hypot(Cx,Cy);
+    // movement, with optional spotting (ember jumps)
+    let dist=f.RoS, spot=false;
+    if (s.q.spotting){ const pSpot=0.005*wspe*f.RoS; if (pSpot>Math.random()){ dist=f.RoS*(2*abRand(Math.max(1,Math.floor(2+wspe*4)))); spot=true; } }
+    f.x+=Math.sin(abRad(f.h))*dist; f.y+=Math.cos(abRad(f.h))*dist;
+    const j=abIdx(s,f.x,f.y);
+    if (j<0){ f.alive=false; continue; }                       // fire leaves the study area
+    if (spot){ s.spots++; abIgnite(s,Math.round(f.x),Math.round(f.y)); }
+    // pre-heating of the cell ahead
+    const ax=f.x+Math.sin(abRad(f.h))*f.RoS, ay=f.y+Math.cos(abRad(f.h))*f.RoS, k=abIdx(s,ax,ay);
+    if (k>=0 && s.flam[k]<1 && s.flam[k]>0){ const d=Math.hypot((k%W)-f.x,((k/W)|0)-f.y); s.flam[k]=Math.min(1,s.flam[k]+0.005*f.RoS/(1+d)**2); }
+    // check-cell: death in exhausted / non-fuel cells, propagation into new cells
+    if (s.fuel[j] <= 0.2*(1.1-f.RoS)){
+      const q1 = f.RoS>=1-f.RoS/10 ? 1 : f.RoS/(1-f.RoS/10);              // P(random-float (1 - RoS/10) < RoS)
+      // ABWiSE re-checks every agent once per agent step, i.e. ~N times per tick
+      if (Math.random() < 1-Math.pow(1-Math.max(0,q1), nNow)){ f.alive=false; continue; }
+    }
+    if (Math.hypot(f.x-f.cx,f.y-f.cy) > Math.sqrt(4*Math.max(0,f.RoS))){
+      let here=0; for (const g of firesNear(f.x,f.y,0.71)) if (g.alive && abIdx(s,g.x,g.y)===j) here++;
+      if (here<3){
+        for (const d of [0,-45,45]) born.push({x:f.x,y:f.y,h:(f.h+d+360)%360,RoS:f.RoS,cx:f.x,cy:f.y,density:f.density,alive:true});
+        s.born+=3; f.alive=false; continue;
+      }
+    }
+    if (f.RoS<=0){ f.alive=false; continue; }
+  }
+  s.fires=s.fires.filter(f=>f.alive).concat(born);
+  // --- consume fuel and mark burned cells
+  for (const f of s.fires){ const i=abIdx(s,f.x,f.y); if(i<0) continue; s.fuel[i]-=f.RoS*s.fuel[i]/P.burnscaler; if (s.fuel[i]<0) s.fuel[i]=0;
+    if (!s.burned[i] && s.flam[i]>0){ s.burned[i]=1; s.arrival[i]=s.tick; } }
+  if (s.fires.length>4000) s.fires=s.fires.slice(0,4000);       // safety cap for the browser
+  abRecord(s);
+  return true;
+}
+function abRunFull(q){ const s=abMakeSim(q); while(abStep(s)){} return s.history[s.history.length-1]; }
+// ===== ABWISE-END =====
+</script>
 <script>
 // ===== MODEL-START (pure functions, no DOM) =====
 const N = 101;
@@ -415,7 +751,7 @@ function chance(s,st,j){
   const humid = (s.p.protected && j%N>=PZ) ? 0.75 : 1;   // intact protected forest keeps a humid microclimate
   return Math.min(100, base * s.p.spread/100 * (s.rained?0.5:1) * humid);
 }
-function pct(s){ return s.initial ? s.burned/s.initial*100 : 0; }
+function pct(s){ return s.initial ? (s.burned-s.saved)/s.initial*100 : 0; }   // extinguished cells do not count as burned
 function done(s){ return s.fires.length===0 && s.embers.length===0 && !(s.p.ignition==="lightning" && s.tick<LIGHTNING_END); }
 function tryIgnite(s,j){ const st=s.g[j]; if (isFuel(st) && Math.random()*100 < chance(s,st,j)) ignite(s,j); }
 
@@ -433,7 +769,8 @@ function step(s){
     if (x<N-1) tryIgnite(s,i+1);
     if (y>0) tryIgnite(s,i-N);
     if (y<N-1) tryIgnite(s,i+N);
-    if (x+2<N && Math.random()*100 < s.p.wind*(s.rained?0.3:1)){ const j=i+2; if (isFuel(s.g[j])) ignite(s,j); }
+    const jd=2+(Math.random()<0.5?1:0);   // ember jump of 2 or 3 cells downwind
+    if (x+jd<N && Math.random()*100 < s.p.wind*(s.rained?0.3:1)){ const j=i+jd; if (isFuel(s.g[j])) ignite(s,j); }
     s.g[i]=EMBER; s.age[i]=0; s.embers.push(i);
   }
   if (s.p.ignition==="lightning" && s.tick<LIGHTNING_END && !s.rained && Math.random()<0.06+0.0006*s.p.drought){
@@ -465,7 +802,8 @@ function runFull(p){ const s=makeSim(p); let guard=0; while(step(s) && guard++<4
 // ---- System dynamics: stocks as shares of the original biome ----
 const RC=0.68;   // critical rainfall index (tipping point)
 function runSD(q){
-  let F=0.74, D=0.06, C=0.20; const dt=0.25; const out=[]; let tip=null;
+  // start values after Flores et al. (2024): ~15 % deforested, 17 % of remaining forest degraded
+  let F=0.7055, D=0.1445, C=0.15; const dt=0.25; const out=[]; let tip=null;
   for (let k=0; k<=75/dt; k++){
     const t=2025+k*dt;
     const warm=1.2+(q.warm-1.2)*(t-2025)/75;
@@ -539,15 +877,15 @@ function runDES(q, withLog){
   function hexToRgb(h){ h=h.trim(); if(h.startsWith("#")){ if(h.length===4) h="#"+h[1]+h[1]+h[2]+h[2]+h[3]+h[3]; const n=parseInt(h.slice(1),16); return [n>>16&255,n>>8&255,n&255]; } const m=h.match(/\d+/g); return m?m.slice(0,3).map(Number):[0,0,0]; }
   function readPalette(){
     const cs=getComputedStyle(document.documentElement);
-    for (const k of ["forest","degraded","soil","burned","break","saved","accent","fighter","rain","muted","ink","line"]){ const v=cs.getPropertyValue("--"+k).trim(); pal[k]=hexToRgb(v); pal[k+"Css"]=v; }
+    for (const k of ["forest","degraded","soil","burned","break","saved","accent","fighter","rain","muted","ink","line","secondary","pasture"]){ const v=cs.getPropertyValue("--"+k).trim(); pal[k]=hexToRgb(v); pal[k+"Css"]=v; }
   }
   function axisY(svg,L,R,W,sy,ticks,fmt){ for (const y of ticks){ el("line",{x1:L,x2:W-R,y1:sy(y),y2:sy(y),class:"grid"},svg); el("text",{x:L-6,y:sy(y)+4,"text-anchor":"end"},svg,fmt(y)); } }
 
   // ================= TABS =================
-  const tabs=["abm","sd","des","cmp"];
+  const tabs=["abw","abm","sd","des","cmp"];
   function show(name){
     for (const t of tabs){ $("tab-"+t).setAttribute("aria-selected", t===name?"true":"false"); $("view-"+t).hidden = t!==name; }
-    if (name!=="abm") stop();
+    if (name!=="abm") stop(); if (name!=="abw" && typeof abStop==="function" && ab) abStop();
   }
   for (const t of tabs) $("tab-"+t).addEventListener("click",()=>{ show(t); try{ history.replaceState(null,"","#"+t); }catch(e){} });
 
@@ -861,8 +1199,165 @@ function runDES(q, withLog){
   $("dDisc").addEventListener("change",renderDES);
   $("bDes").addEventListener("click",renderDES);
 
+  // ================= ABM: ABWiSE fire agents =================
+  const CELL_HA=0.25;                          // 1 cell = 50 m x 50 m
+  const abIds=["abwWind","abwDir","abwDrought","abwDeg","abwM1"];
+  const AB_BASE={windSpeed:15,windDir:90,drought:40,degradation:30,m1:0.2,stoptime:360,spotting:false,hills:false,river:true,firebreak:false,ignition:"frontier"};
+  const AB_PRESETS=[
+    {name:"Baseline", note:"Dry season: drought 40, wind 15 km/h towards the east, 30 % degraded forest.", p:{}},
+    {name:"Humid season", note:"Little drought: intact rainforest barely burns.", p:{drought:10,windSpeed:8}},
+    {name:"Drought year", note:"Extreme drought like 2023/24: everything is drier.", p:{drought:80}},
+    {name:"Windy drought + embers", note:"Strong wind and ember spotting: the front stretches downwind and jumps ahead.", p:{drought:80,windSpeed:35,spotting:true}},
+    {name:"Degraded frontier", note:"Logging and edge effects: most forest near the frontier is degraded.", p:{drought:60,degradation:85}},
+    {name:"Calm day", note:"Almost no wind: the fire spreads in all directions.", p:{drought:60,windSpeed:2}},
+    {name:"WWF: restore + firebreak", note:"Drought year, but degraded forest restored (5 %) and a firebreak road.", p:{drought:80,degradation:5,firebreak:true}},
+  ];
+  function abQ(){ return { windSpeed:+$("abwWind").value, windDir:+$("abwDir").value, drought:+$("abwDrought").value, degradation:+$("abwDeg").value,
+    m1:+$("abwM1").value, stoptime:+$("abwStop").value, spotting:$("abwSpot").checked, hills:$("abwHills").checked,
+    river:$("abwRiver").checked, firebreak:$("abwFb").checked, ignition:$("abwIgn").value }; }
+  function abApply(p){ $("abwWind").value=p.windSpeed; $("abwDir").value=p.windDir; $("abwDrought").value=p.drought; $("abwDeg").value=p.degradation;
+    $("abwM1").value=p.m1; $("abwStop").value=p.stoptime; $("abwSpot").checked=p.spotting; $("abwHills").checked=p.hills;
+    $("abwRiver").checked=p.river; $("abwFb").checked=p.firebreak; $("abwIgn").value=p.ignition; }
+  const DIRS=["N","NE","E","SE","S","SW","W","NW"];
+  function abLabels(){
+    $("vabwWind").textContent=$("abwWind").value+" km/h"; const d=+$("abwDir").value;
+    $("vabwDir").textContent=d+"° ("+DIRS[Math.round(d/45)%8]+")"; $("vabwDrought").textContent=$("abwDrought").value;
+    $("vabwDeg").textContent=$("abwDeg").value+" %"; $("vabwM1").textContent=(+$("abwM1").value).toFixed(2);
+    $("vabwTps").textContent=$("abwTps").value+" ticks/s"; const st=+$("abwStop").value; $("vabwStop").textContent=Math.floor(st/60)+" h"+(st%60?" "+(st%60)+" min":"");
+  }
+  const abBox=$("abPresets");
+  AB_PRESETS.forEach((pr,i)=>{ const b=document.createElement("button"); b.textContent=pr.name; b.setAttribute("aria-pressed","false");
+    b.addEventListener("click",()=>{ abApply({...AB_BASE,...pr.p}); abMark(i); abLabels(); abSetup(); }); abBox.appendChild(b); });
+  function abMark(i){ [...abBox.children].forEach((b,k)=>b.setAttribute("aria-pressed",k===i?"true":"false")); $("abPresetNote").textContent = i>=0 ? AB_PRESETS[i].note : "Custom settings."; }
+  $("abFuelTable").innerHTML=AB.FUEL.slice(0,4).map(f=>"<tr><td>"+f.name+"</td><td class='num'>"+f.fuel.toFixed(1)+"</td><td class='num'>"+f.flam.toFixed(2)+"</td><td class='num'>+"+f.dry.toFixed(2)+" × drought</td></tr>").join("");
+
+  const abCv=$("abwCanvas"), abCtx=abCv.getContext("2d");
+  const abOff=document.createElement("canvas"); abOff.width=AB.W; abOff.height=AB.H;
+  const abOctx=abOff.getContext("2d"); const abImg=abOctx.createImageData(AB.W,AB.H);
+  let ab, abRunning=false, abRaf=0, abLast=0, abAcc=0;
+  function abTypeColor(t){ return [pal.forest,pal.degraded,pal.secondary,pal.pasture,pal.rain,pal.break][t]; }
+  function abDraw(){
+    const s=ab, d=abImg.data, W=AB.W, H=AB.H;
+    for (let y=0;y<H;y++) for (let x=0;x<W;x++){
+      const i=y*W+x, t=s.type[i]; let c=abTypeColor(t);
+      if (s.burned[i]){ const f0=AB.FUEL[t].fuel||1; const used=1-Math.max(0,s.fuel[i])/f0; c=mix(c,pal.burned,0.55+0.45*Math.min(1,used)); }
+      if (s.q.hills && t<4){ const sh=0.12*Math.max(-1,Math.min(1,s.elev[i]/40)); c=mix(c, sh>0?[255,255,255]:[0,0,0], Math.abs(sh)); }
+      const o=((H-1-y)*W+x)*4; d[o]=c[0]; d[o+1]=c[1]; d[o+2]=c[2]; d[o+3]=255;
+    }
+    abOctx.putImageData(abImg,0,0);
+    abCtx.imageSmoothingEnabled=false; abCtx.drawImage(abOff,0,0,abCv.width,abCv.height);
+    const k=abCv.width/W;
+    abCtx.lineWidth=2; abCtx.lineCap="round";
+    for (const f of s.fires){
+      const px=(f.x+0.5)*k, py=(H-1-f.y+0.5)*k, r=f.h*Math.PI/180, len=k*(0.5+Math.min(2.5,f.RoS*8));
+      const t=Math.min(1,f.RoS*4);
+      abCtx.strokeStyle="hsl("+(52-47*t)+",95%,"+(58-8*t)+"%)";
+      abCtx.beginPath(); abCtx.moveTo(px-Math.sin(r)*len*0.3,py+Math.cos(r)*len*0.3); abCtx.lineTo(px+Math.sin(r)*len,py-Math.cos(r)*len); abCtx.stroke();
+    }
+    // wind arrow
+    const cx=abCv.width-44, cy=44, wr=s.q.windDir*Math.PI/180, L=26;
+    abCtx.fillStyle="rgba(255,255,255,0.85)"; abCtx.beginPath(); abCtx.arc(cx,cy,34,0,Math.PI*2); abCtx.fill();
+    abCtx.strokeStyle="#1c2920"; abCtx.fillStyle="#1c2920"; abCtx.lineWidth=3;
+    const tx=cx+Math.sin(wr)*L, ty=cy-Math.cos(wr)*L;
+    abCtx.beginPath(); abCtx.moveTo(cx-Math.sin(wr)*L*0.7,cy+Math.cos(wr)*L*0.7); abCtx.lineTo(tx,ty); abCtx.stroke();
+    abCtx.beginPath(); abCtx.moveTo(tx,ty); abCtx.lineTo(tx-Math.sin(wr-0.5)*10,ty+Math.cos(wr-0.5)*10); abCtx.lineTo(tx-Math.sin(wr+0.5)*10,ty+Math.cos(wr+0.5)*10); abCtx.closePath(); abCtx.fill();
+    abCtx.font="600 12px "+getComputedStyle(document.body).fontFamily; abCtx.textAlign="center"; abCtx.fillText(s.q.windSpeed+" km/h",cx,cy+50>abCv.height?cy:cy+52);
+    // stats
+    let b=0; for (let i=0;i<s.burned.length;i++) b+=s.burned[i];
+    $("abBurned").textContent=Math.round(b*CELL_HA).toLocaleString("en")+" ha";
+    $("abTime").textContent=Math.floor(s.tick/60)+":"+String(s.tick%60).padStart(2,"0");
+    $("abAgents").textContent=s.fires.length.toLocaleString("en");
+    const mr=s.rosHist[s.rosHist.length-1]||0; $("abRoS").textContent=(mr*50).toFixed(1)+" m/min";
+    $("abSpots").textContent=s.spots;
+    const st=$("abState");
+    if (s.fires.length===0 && s.tick===0){ st.textContent="no fire – click the map"; st.className="pill"; }
+    else if (abDone(s)){ st.textContent= s.fires.length? "time limit reached":"fire out"; st.className="pill ok"; }
+    else if (abRunning){ st.textContent="burning"; st.className="pill warn"; }
+    else { st.textContent="paused"; st.className="pill"; }
+    abChart(s);
+  }
+  function abChart(s){
+    const svg=$("abChart"); svg.textContent="";
+    const W=420,H=140,L=44,R=10,T=10,B=22;
+    const ha=s.history.map(v=>v/100*s.burnable*CELL_HA);
+    const maxX=Math.max(60,s.q.stoptime), top=Math.max(10,Math.ceil(Math.max(...ha)/10)*10);
+    const sx=x=>L+(W-L-R)*x/maxX, sy=y=>T+(H-T-B)*(1-y/top);
+    axisY(svg,L,R,W,sy,[0,top/2,top],v=>Math.round(v)+" ha");
+    el("text",{x:L,y:H-5},svg,"0 h"); el("text",{x:W-R,y:H-5,"text-anchor":"end"},svg,(maxX/60).toFixed(maxX%60?1:0)+" h");
+    if (ha.length>1){
+      const pts=ha.map((v,i)=>sx(i)+","+sy(v)).join(" ");
+      el("polygon",{points:sx(0)+","+sy(0)+" "+pts+" "+sx(ha.length-1)+","+sy(0),fill:pal.accentCss,"fill-opacity":"0.14"},svg);
+      el("polyline",{points:pts,fill:"none",stroke:pal.accentCss,"stroke-width":2},svg);
+      el("circle",{cx:sx(ha.length-1),cy:sy(ha[ha.length-1]),r:3.5,fill:pal.accentCss},svg);
+    }
+  }
+  function abSetup(){ abStop(); ab=abMakeSim(abQ()); abDraw(); }
+  function abLoop(ts){
+    if(!abRunning) return;
+    const dtS=Math.min(0.25,(ts-abLast)/1000); abLast=ts; abAcc+=dtS*(+$("abwTps").value);
+    let n=Math.min(4,Math.floor(abAcc)); abAcc-=n;
+    while(n-->0){ if(!abStep(ab)){ abStop(); break; } }
+    abDraw();
+    if(abRunning) abRaf=requestAnimationFrame(abLoop);
+  }
+  function abStart(){ if (abDone(ab) && ab.fires.length===0 && ab.tick>0) abSetup(); if (abDone(ab) && ab.tick>=ab.q.stoptime) abSetup();
+    abRunning=true; abAcc=1; abLast=performance.now(); $("abGo").textContent="Pause"; abRaf=requestAnimationFrame(abLoop); }
+  function abStop(){ abRunning=false; cancelAnimationFrame(abRaf); $("abGo").textContent="Go"; if(ab) abDraw(); }
+  for (const id of abIds) $(id).addEventListener("input",()=>{ abMark(-1); abLabels(); abSetup(); });
+  for (const id of ["abwSpot","abwHills","abwRiver","abwFb","abwIgn"]) $(id).addEventListener("change",()=>{ abMark(-1); abSetup(); });
+  $("abwTps").addEventListener("input",abLabels);
+  $("abwStop").addEventListener("input",()=>{ abLabels(); if(ab){ ab.q.stoptime=+$("abwStop").value; abDraw(); } });
+  $("abSetup").addEventListener("click",abSetup);
+  $("abGo").addEventListener("click",()=> abRunning?abStop():abStart());
+  $("abStep").addEventListener("click",()=>{ abRunning=false; cancelAnimationFrame(abRaf); $("abGo").textContent="Go"; abStep(ab); abDraw(); });
+  abCv.addEventListener("click",e=>{
+    const r=abCv.getBoundingClientRect(); const x=Math.floor((e.clientX-r.left)/r.width*AB.W), y=AB.H-1-Math.floor((e.clientY-r.top)/r.height*AB.H);
+    abIgnite(ab,x,y); abMark(-1); abDraw();
+  });
+
+  // --- Monte Carlo in a background worker (falls back to the main thread)
+  let abMcRes=[];
+  function abDrawMc(res){
+    const svg=$("abMc"); svg.textContent="";
+    const W=460,L=170,R=60,T=8,rowH=34,H=T+rowH*AB_PRESETS.length+24;
+    svg.setAttribute("viewBox","0 0 "+W+" "+H);
+    const mx=Math.max(50,...res.map(r=>r.max)); const top=Math.ceil(mx/50)*50;
+    const sx=v=>L+(W-L-R)*v/top;
+    for (const v of [0,top/2,top]){ el("line",{x1:sx(v),x2:sx(v),y1:T,y2:H-22,class:"grid"},svg); el("text",{x:sx(v),y:H-6,"text-anchor":"middle"},svg,Math.round(v)+" ha"); }
+    AB_PRESETS.forEach((pr,i)=>{ const y=T+i*rowH+6, h=rowH-14; el("text",{x:L-8,y:y+h/2+4,"text-anchor":"end",style:"fill:var(--ink)"},svg,pr.name); });
+    res.forEach(r=>{ const i=r.i, y=T+i*rowH+6, h=rowH-14;
+      el("rect",{x:L,y,width:Math.max(1,sx(r.mean)-L),height:h,rx:3,fill:i===0?pal.mutedCss:pal.accentCss,"fill-opacity":i===0?"0.5":"0.85"},svg);
+      el("line",{x1:sx(r.min),x2:sx(r.max),y1:y+h/2,y2:y+h/2,stroke:pal.inkCss,"stroke-width":1.2,"stroke-opacity":"0.6"},svg);
+      el("text",{x:sx(Math.max(r.mean,r.max))+6,y:y+h/2+4,style:"fill:var(--ink)"},svg,Math.round(r.mean)+" ha"); });
+  }
+  function abMcJobs(){ return AB_PRESETS.map((pr,i)=>({i,name:pr.name,q:{...AB_BASE,...pr.p,stoptime:240}})); }
+  function abMcCollect(i,v){ abMcRes=abMcRes.filter(r=>r.i!==i).concat([{i,mean:v.reduce((a,b)=>a+b,0)/v.length,min:Math.min(...v),max:Math.max(...v)}]); abDrawMc(abMcRes); }
+  function abRunMc(){
+    const runs=5, jobs=abMcJobs(); $("abMcRun").disabled=true; abMcRes=[]; abDrawMc([]);
+    let worker=null;
+    try {
+      const src=$("abwiseSrc").textContent+"\nonmessage=function(e){var jobs=e.data.jobs,runs=e.data.runs;for(var j=0;j<jobs.length;j++){var v=[];for(var r=0;r<runs;r++){var s=abMakeSim(jobs[j].q);while(abStep(s)){}var b=0;for(var i=0;i<s.burned.length;i++)b+=s.burned[i];v.push(b*"+CELL_HA+");postMessage({type:'p',j:j,r:r});}postMessage({type:'res',i:jobs[j].i,v:v});}postMessage({type:'done'});};";
+      worker=new Worker(URL.createObjectURL(new Blob([src],{type:"text/javascript"})));
+    } catch(e){ worker=null; }
+    if (worker){
+      worker.onmessage=e=>{ const m=e.data;
+        if (m.type==="p") $("abMcStatus").textContent=jobs[m.j].name+": run "+(m.r+1)+" of "+runs;
+        else if (m.type==="res") abMcCollect(m.i,m.v);
+        else { $("abMcStatus").textContent="Done: "+runs+" runs × "+jobs.length+" presets, 4 h each"; $("abMcRun").disabled=false; worker.terminate(); } };
+      worker.onerror=()=>{ worker.terminate(); abRunMcMain(jobs,runs); };
+      worker.postMessage({jobs,runs});
+    } else abRunMcMain(jobs,runs);
+  }
+  async function abRunMcMain(jobs,runs){
+    for (const j of jobs){ const v=[]; for (let r=0;r<runs;r++){ $("abMcStatus").textContent=j.name+": run "+(r+1)+" of "+runs; await tick0();
+      const s=abMakeSim(j.q); while(abStep(s)){} let b=0; for (let i=0;i<s.burned.length;i++) b+=s.burned[i]; v.push(b*CELL_HA); }
+      abMcCollect(j.i,v); }
+    $("abMcStatus").textContent="Done: "+runs+" runs × "+jobs.length+" presets, 4 h each"; $("abMcRun").disabled=false;
+  }
+  $("abMcRun").addEventListener("click",abRunMc);
+
   // ================= THEME + BOOT =================
-  function repaintAll(){ readPalette(); if(sim) draw(); drawSweep(lastSweep); if(lastScen.length) drawScen(lastScen); renderSD(); renderSDScen(); drawCLD(); renderDES(); }
+  function repaintAll(){ readPalette(); if(sim) draw(); if(ab) abDraw(); if(abMcRes.length) abDrawMc(abMcRes); drawSweep(lastSweep); if(lastScen.length) drawScen(lastScen); renderSD(); renderSDScen(); drawCLD(); renderDES(); }
   window.matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change",repaintAll);
   new MutationObserver(repaintAll).observe(document.documentElement,{attributes:true,attributeFilter:["data-theme"]});
 
@@ -889,6 +1384,7 @@ function runDES(q, withLog){
   });
 
   readPalette(); applyParams(BASE); markPreset(0); syncLabels(); setup();
+  abApply(AB_BASE); abMark(0); abLabels(); ab=abMakeSim(abQ()); for (let k=0;k<90;k++) abStep(ab); abDraw(); abDrawMc([]);
   for (let k=0;k<35;k++) step(sim); draw();
   drawSweep([]); drawScen([]);
   renderSD(); renderSDScen(); drawCLD(); renderDES();
