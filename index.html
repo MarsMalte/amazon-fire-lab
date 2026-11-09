@@ -117,15 +117,36 @@ td.num,th.num{text-align:right;font-family:var(--mono);font-variant-numeric:tabu
 .overlay .card span{font-family:var(--mono);font-size:13px;word-break:break-all;text-align:center}
 #qrBig img,#qrBig canvas{width:min(70vh,80vw);height:min(70vh,80vw);display:block}
 @media (prefers-reduced-motion: reduce){*{scroll-behavior:auto}}
+/* Workshop 2: feedback loops */
+svg.fslcld text.fsl-node{font-family:var(--body);font-size:14.5px;fill:var(--ink)}
+svg.fslcld text.fsl-sign{font-family:var(--mono);font-size:18px;font-weight:600}
+svg.fslcld text.fsl-loop{font-family:var(--display);font-size:15px;font-weight:600}
+svg.fslcld text.fsl-plus,.fsl-plus{fill:var(--forest);color:var(--forest)}
+svg.fslcld text.fsl-minus,.fsl-minus{fill:var(--accent);color:var(--accent)}
+.fsl-edge{outline:none}
+.fsl-edge:focus-visible path:nth-child(2){stroke:var(--accent)!important;stroke-width:3px!important}
+.fsl-dash{display:inline-block;width:22px;border-top:2px dashed var(--ink);vertical-align:middle}
+.fsl-eq{font-family:var(--mono);font-size:11.5px;line-height:1.55;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 12px;overflow-x:auto;margin:0;white-space:pre}
+.fsl-chain{font-size:14px;line-height:1.75;margin:0}
+.fsl-ev{margin:0;padding-left:18px;font-size:13.5px;display:grid;gap:4px}
+details.fsl-details summary{cursor:pointer;font-weight:600;font-size:14px;padding:4px 0}
+#fslInfo{display:grid;gap:10px}
+.fsl-scroll{overflow-x:auto}
+@media (max-width:600px){#fslCld{min-width:640px}}
+.bench.fsl-top{grid-template-columns:minmax(0,1.75fr) minmax(0,1fr)}
+@media (max-width:860px){.bench.fsl-top{grid-template-columns:1fr}}
+#fslInfo h2{font-size:20px}
+#fslInfo p{margin:0}
+
 </style>
 
 <div class="wrap">
   <header class="headrow">
    <div style="display:grid;gap:6px;min-width:0">
-    <div class="eyebrow">WWF wildfire risk · Amazon · three simulation methods</div>
+    <div class="eyebrow">Wildfire simulation · Workshops 1 and 2 · Advanced Quantitative Assessment, University of Vienna</div>
     <h1>Amazon Fire Lab</h1>
-    <p class="lede">One problem, several lenses. The agent-based model lets mobile fire agents form a fire front under wind and drought. The cellular automaton shows when a fire crosses the whole landscape. The system dynamics model shows where the forest is heading until 2100. The discrete event model shows whether fire brigades can keep up during the fire season.</p>
-    <p class="credit">Agent-based model: JavaScript re-implementation of ABWiSE v1.0 – Katan, J., &amp; Perez, L. (2021). <a href="https://nhess.copernicus.org/articles/21/3141/2021/" target="_blank" rel="noopener">ABWiSE v1.0: toward an agent-based approach to simulating wildfire spread</a>, <i>Natural Hazards and Earth System Sciences, 21</i>, 3141–3160 (code CC BY 4.0) – applied to a stylised Amazon landscape. Cellular automaton: extends Wilensky, U. (1997). <a href="https://ccl.northwestern.edu/netlogo/models/Fire" target="_blank" rel="noopener">NetLogo Fire model</a>, CCL, Northwestern University (CC BY-NC-SA 3.0), with an agent-based fire-brigade layer. System dynamics and discrete event models: own stylised models. All Amazon parameters are illustrative assumptions, not calibrated forecasts. Context figures: Flores et al. (2024), Nature; Lovejoy &amp; Nobre (2018), Science Advances.</p>
+    <p class="lede">One problem, several lenses. The agent-based model lets mobile fire agents form a fire front under wind and drought. The cellular automaton shows when a fire crosses the whole landscape. The system dynamics model shows where the forest is heading until 2100. The discrete event model shows whether fire brigades can keep up during the fire season. The feedback-loop lab (Workshop 2) shows why suppressing every fire can make future fires worse.</p>
+    <p class="credit">Agent-based model: JavaScript re-implementation of ABWiSE v1.0 – Katan, J., &amp; Perez, L. (2021). <a href="https://nhess.copernicus.org/articles/21/3141/2021/" target="_blank" rel="noopener">ABWiSE v1.0: toward an agent-based approach to simulating wildfire spread</a>, <i>Natural Hazards and Earth System Sciences, 21</i>, 3141–3160 (code CC BY 4.0) – applied to a stylised Amazon landscape. Cellular automaton: extends Wilensky, U. (1997). <a href="https://ccl.northwestern.edu/netlogo/models/Fire" target="_blank" rel="noopener">NetLogo Fire model</a>, CCL, Northwestern University (CC BY-NC-SA 3.0), with an agent-based fire-brigade layer. System dynamics and discrete event models: own stylised models. All Amazon parameters are illustrative assumptions, not calibrated forecasts. Context figures: Flores et al. (2024), Nature; Lovejoy &amp; Nobre (2018), Science Advances. Feedback loops (Workshop 2): based on Kreider, M. R., et al. (2024). <a href="https://doi.org/10.1038/s41467-024-46702-0" target="_blank" rel="noopener">Fire suppression makes wildfires more severe and accentuates impacts of climate change and fuel accumulation</a>, <i>Nature Communications, 15</i>, 2412; own stylised model.</p>
    </div>
    <aside class="share" aria-label="Open on your phone">
      <div class="qrbox" id="qrSmall"></div>
@@ -143,6 +164,7 @@ td.num,th.num{text-align:right;font-family:var(--mono);font-variant-numeric:tabu
     <button class="tab" role="tab" id="tab-abm" aria-controls="view-abm" aria-selected="false"><small>Cellular automaton</small><b>Fire spread (NetLogo)</b></button>
     <button class="tab" role="tab" id="tab-sd" aria-controls="view-sd" aria-selected="false"><small>System dynamics</small><b>Forest until 2100</b></button>
     <button class="tab" role="tab" id="tab-des" aria-controls="view-des" aria-selected="false"><small>Discrete event</small><b>Brigade dispatch</b></button>
+    <button class="tab" role="tab" id="tab-fsl" aria-controls="view-fsl" aria-selected="false"><small>Workshop 2 · System dynamics</small><b>Feedback loops</b></button>
     <button class="tab" role="tab" id="tab-cmp" aria-controls="view-cmp" aria-selected="false"><small>Synthesis</small><b>Compare methods</b></button>
   </nav>
 
@@ -211,7 +233,7 @@ td.num,th.num{text-align:right;font-family:var(--mono);font-variant-numeric:tabu
             <div class="hint">Raises the flammability of all vegetation, most in intact forest.</div></div>
         </div>
         <div class="group">
-          <h3>Landscape and WWF levers</h3>
+          <h3>Landscape and policy levers</h3>
           <div class="ctrl"><label for="abwDeg"><span>Degraded forest (restoration lowers it)</span><span id="vabwDeg"></span></label><input type="range" id="abwDeg" min="0" max="100" value="30"></div>
           <label class="switch" for="abwFb"><input type="checkbox" id="abwFb"> Firebreak road through the forest</label>
           <label class="switch" for="abwRiver"><input type="checkbox" id="abwRiver" checked> River (natural barrier)</label>
@@ -323,7 +345,7 @@ td.num,th.num{text-align:right;font-family:var(--mono);font-variant-numeric:tabu
             <div class="hint">Rain puts out 70 % of active fires and halves spread afterwards. 0 = no rain.</div></div>
         </div>
         <div class="group">
-          <h3>WWF policy levers</h3>
+          <h3>Policy levers</h3>
           <div class="ctrl"><label for="ff"><span>Fire brigades</span><span id="vff"></span></label><input type="range" id="ff" min="0" max="50" value="0"></div>
           <div class="ctrl"><label for="delay"><span>Brigade response delay</span><span id="vdelay"></span></label><input type="range" id="delay" min="0" max="60" value="0"></div>
           <label class="switch" for="fb"><input type="checkbox" id="fb"> Firebreak through the middle</label>
@@ -351,7 +373,7 @@ td.num,th.num{text-align:right;font-family:var(--mono);font-variant-numeric:tabu
 
   <!-- ===================== SD ===================== -->
   <section class="view" id="view-sd" role="tabpanel" aria-labelledby="tab-sd" hidden>
-    <p class="question"><span>Question · aggregate level · years to decades</span>Does the Amazon cross its tipping point before 2100, and which WWF levers keep it below?</p>
+    <p class="question"><span>Question · aggregate level · years to decades</span>Does the Amazon cross its tipping point before 2100, and which policy levers keep it below?</p>
     <div class="bench">
       <div class="panel">
         <h2>Stocks 2025–2100</h2>
@@ -380,19 +402,19 @@ td.num,th.num{text-align:right;font-family:var(--mono);font-variant-numeric:tabu
           <div class="ctrl"><label for="sdWarm"><span>Warming by 2100</span><span id="vsdWarm"></span></label><input type="range" id="sdWarm" min="1.2" max="4.5" step="0.1" value="2.7"></div>
         </div>
         <div class="group">
-          <h3>WWF policy levers</h3>
+          <h3>Policy levers</h3>
           <div class="ctrl"><label for="sdCut"><span>Deforestation cut (supply chains, EUDR)</span><span id="vsdCut"></span></label><input type="range" id="sdCut" min="0" max="100" step="5" value="0"></div>
           <div class="ctrl"><label for="sdRest"><span>Restoration of degraded forest</span><span id="vsdRest"></span></label><input type="range" id="sdRest" min="0" max="3" step="0.1" value="0"></div>
           <div class="ctrl"><label for="sdFm"><span>Fire management (fewer fires)</span><span id="vsdFm"></span></label><input type="range" id="sdFm" min="0" max="80" step="5" value="0"></div>
         </div>
-        <p class="note">Start values 2025 after Flores et al. (2024): about 15 % deforested and 17 % of the remaining forest degraded (71 % intact, 14 % degraded, 15 % cleared). Tipping when the rainfall index falls below 0.68; after that, dieback turns forest into savanna.</p>
+        <p class="note">Start values 2025 after Flores et al. (2024): about 15 % deforested and 17 % of the remaining forest degraded (71 % intact, 14 % degraded, 15 % cleared). Model assumption (not an empirical threshold): tipping when the rainfall index falls below 0.68; after that, dieback turns forest into savanna.</p>
       </div>
     </div>
     <div class="duo">
       <div class="panel">
         <h2>Causal loop diagram</h2>
         <svg id="cld" class="chart cld" viewBox="0 0 680 370" role="img" aria-label="Causal loop diagram"></svg>
-        <p class="note">R1 moisture recycling and R2 fire–degradation push the system towards the tipping point. B1 is the WWF lever: forest loss creates public pressure that cuts deforestation.</p>
+        <p class="note">R1 moisture recycling and R2 fire–degradation push the system towards the tipping point. B1 is the policy lever: forest loss creates public pressure that cuts deforestation.</p>
       </div>
       <div class="panel">
         <h2>Forest cover by scenario</h2>
@@ -434,7 +456,7 @@ td.num,th.num{text-align:right;font-family:var(--mono);font-variant-numeric:tabu
           <div class="ctrl"><label for="dG"><span>Fire growth while unattended</span><span id="vdG"></span></label><input type="range" id="dG" min="1" max="50" value="10"></div>
         </div>
         <div class="group">
-          <h3>WWF policy levers</h3>
+          <h3>Policy levers</h3>
           <div class="ctrl"><label for="dC"><span>Fire brigades (servers, c)</span><span id="vdC"></span></label><input type="range" id="dC" min="1" max="15" value="4"></div>
           <div class="ctrl"><label for="dDisc"><span>Queue discipline</span><span></span></label>
             <select id="dDisc"><option value="fifo">First come, first served (FIFO)</option><option value="prot">Protected territory first (priority)</option></select>
@@ -465,20 +487,136 @@ td.num,th.num{text-align:right;font-family:var(--mono);font-variant-numeric:tabu
   </section>
 
   <!-- ===================== COMPARE ===================== -->
+  <!-- ===================== WORKSHOP 2: FEEDBACK LOOPS ===================== -->
+  <section class="view" id="view-fsl" role="tabpanel" aria-labelledby="tab-fsl" hidden>
+    <p class="question"><span>Workshop 2 · system dynamics · causal loop diagram</span>Why can putting out every wildfire make future wildfires worse?</p>
+    <p class="lede">Public land management agencies treat fire suppression as their standard response. Kreider et al. (2024) show in a simulation of 5 million fires that this response has two sides: it keeps most fires small today, but it shifts the fires that still burn towards extreme conditions and lets fuel build up. This tab turns their argument into four feedback loops, runs them as a small stock-and-flow model and repeats the key experiment with individual fires.</p>
+
+    <!-- 1 · interactive CLD -->
+    <div class="bench fsl-top">
+      <div class="panel">
+        <h2>1 · Causal loop diagram</h2>
+        <div class="presets" id="fslLoopBtns" role="group" aria-label="Highlight a feedback loop"></div>
+        <div class="fsl-scroll"><svg id="fslCld" class="chart fslcld" viewBox="0 0 820 450" role="img" aria-label="Causal loop diagram with the loops B1, R1, R2 and B2"></svg></div>
+        <div class="legend">
+          <span><b class="fsl-plus">+</b>&nbsp;same direction</span>
+          <span><b class="fsl-minus">−</b>&nbsp;opposite direction</span>
+          <span><b>||</b>&nbsp;delay</span>
+          <span><i class="fsl-dash"></i>assumption of this model, not simulated by Kreider et al.</span>
+        </div>
+        <p class="note">Click a loop button or any arrow. Reading rule from the course (Unit 2): an even number of “−” links (or none) gives a reinforcing loop R, an odd number gives a balancing loop B.</p>
+      </div>
+      <div class="panel" aria-live="polite">
+        <div id="fslInfo"></div>
+      </div>
+    </div>
+
+    <!-- 2 · stock-and-flow model -->
+    <div class="bench">
+      <div class="panel">
+        <h2>2 · From loops to stocks and flows: 100 years of fire management</h2>
+        <svg id="fslBurn" class="chart" viewBox="0 0 560 250" role="img" aria-label="Burned area per year"></svg>
+        <div class="legend" id="fslBurnLegend"></div>
+        <div class="duo">
+          <div><h3 class="sub">Share of burned area at high severity</h3><svg id="fslSev" class="chart" viewBox="0 0 280 170" role="img" aria-label="High-severity share"></svg></div>
+          <div><h3 class="sub">Fuel load (stock, Mg/ha)</h3><svg id="fslFuel" class="chart" viewBox="0 0 280 170" role="img" aria-label="Fuel load"></svg></div>
+        </div>
+        <div class="callout" id="fslNote"></div>
+      </div>
+      <div class="panel">
+        <div class="stats">
+          <div class="stat"><small>Burned · first decade</small><b id="fslB0">–</b></div>
+          <div class="stat hot"><small>Burned · last decade</small><b id="fslB1">–</b></div>
+          <div class="stat"><small>Growth per year</small><b id="fslG">–</b></div>
+          <div class="stat hot"><small>High severity</small><b id="fslHs">–</b></div>
+        </div>
+        <div class="group">
+          <h3>Suppression policy (scenarios of Kreider et al., 2024, p. 7)</h3>
+          <div class="presets" id="fslPolicy"></div>
+          <p class="note" id="fslPolicyNote"></p>
+        </div>
+        <div class="group">
+          <h3>Drivers and levers</h3>
+          <div class="ctrl"><label for="fslTrend"><span>Drying trend (climate)</span><span id="vfslTrend"></span></label><input type="range" id="fslTrend" min="0" max="0.3" step="0.01" value="0.15"><span class="hint">Increase of the fire-weather index per decade.</span></div>
+          <div class="ctrl star"><label for="fslRx"><span>Low-intensity fire (B2: prescribed and cultural burning)</span><span id="vfslRx"></span></label><input type="range" id="fslRx" min="0" max="5" step="0.25" value="0"><span class="hint">Share of the landscape treated per year.</span></div>
+          <label class="switch"><input type="checkbox" id="fslResp" checked> B1 management response: more burned area than accepted raises suppression effort (regressive policies)</label>
+        </div>
+        <div class="group">
+          <h3>Equations (Unit 2 notation, annual steps)</h3>
+          <pre class="fsl-eq" id="fslEq"></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3 · loop dominance + scenario comparison -->
+    <div class="duo">
+      <div class="panel">
+        <h2>3 · Which loop dominates when?</h2>
+        <svg id="fslDom" class="chart" viewBox="0 0 460 260" role="img" aria-label="Loop activity per decade"></svg>
+        <div class="legend" id="fslDomLegend"></div>
+        <p class="note">Indicative decomposition for the selected policy, in % of the landscape per year: B1 = area kept from burning by suppression; R1 = extra area caused by fuel that suppression left behind; R2 = extra high-severity area caused by the suppression filter; B2 = area avoided by low-intensity fire. Each value compares the run with a counterfactual run (no suppression, or no low-intensity fire).</p>
+      </div>
+      <div class="panel">
+        <h2>4 · All five policies compared</h2>
+        <svg id="fslScen" class="chart" viewBox="0 0 460 260" role="img" aria-label="Burned area by policy"></svg>
+        <div class="tablewrap"><table><thead><tr><th>Policy</th><th class="num">Burned 0-10</th><th class="num">Burned 90-100</th><th class="num">Growth</th><th class="num">Doubling</th><th class="num">High sev.</th></tr></thead><tbody id="fslTable"></tbody></table></div>
+        <p class="note">Reference from the paper (240-year aridity gradient, western North American forests): burned area grows 5.0 % per year under maximum suppression vs. 1.8 % without suppression and doubles every 14 vs. 39 years; progressive suppression doubles slowest (44 years) (Kreider et al., 2024, p. 3). This model only reproduces the direction of these effects, not the values.</p>
+      </div>
+    </div>
+
+    <!-- 4 · individual fires (multi-method) -->
+    <div class="bench">
+      <div class="panel">
+        <h2>5 · The suppression filter with 2,000 individual fires</h2>
+        <svg id="fslHist" class="chart" viewBox="0 0 560 260" role="img" aria-label="Fire size distribution"></svg>
+        <div class="legend" id="fslHistLegend"></div>
+        <div class="callout" id="fslFireNote"></div>
+      </div>
+      <div class="panel">
+        <div class="stats">
+          <div class="stat"><small>Fires &lt; 121 ha</small><b id="fslSmall">–</b></div>
+          <div class="stat hot"><small>Area from largest 1 %</small><b id="fslTop">–</b></div>
+          <div class="stat"><small>High severity</small><b id="fslFhs">–</b></div>
+        </div>
+        <div class="group">
+          <h3>Policy</h3>
+          <div class="presets" id="fslFirePolicy"></div>
+          <div class="ctrl"><label for="fslArid"><span>Season dryness</span><span id="vfslArid"></span></label><input type="range" id="fslArid" min="0" max="1" step="0.1" value="0"></div>
+          <div class="btns"><button id="fslReseed">New random season</button></div>
+        </div>
+        <p class="note">Individual-level, stochastic counterpart to the aggregate loop model (multi-method view, Unit 1). Each fire gets autocorrelated daily fire weather; regressive policies attack after 1, 2 or 4 hours and suppress low-intensity spread most, progressive suppression lets low-intensity fire burn; no policy can stop extreme fire. Reference: under maximum suppression 97-99 % of fires stay below 121 ha, and 91 % of the burned area comes from the largest 1 % of fires vs. 4 % without suppression (Kreider et al., 2024, pp. 3-4).</p>
+      </div>
+    </div>
+
+    <!-- 5 · conclusion, data, sources -->
+    <div class="panel">
+      <h2>6 · What the loops tell a policy maker</h2>
+      <div class="chain">
+        <div><small>B1 · short-term fix</small><b>Suppression works today</b><span class="note">Most fires stay small, and the burned area falls compared with no suppression (Kreider et al., 2024, pp. 3-4).</span></div>
+        <div><small>R1 + R2 · long-term fail</small><b>The remaining fires get worse</b><span class="note">Fuel builds up (R1, not simulated by Kreider et al., p. 6), and the fires that escape are the extreme ones (R2, pp. 2-4).</span></div>
+        <div><small>B2 · long-term fix</small><b>Let low-intensity fire work</b><span class="note">Progressive suppression lowers the high-severity share by 15-17 % and offsets one to nearly two decades of climate change or fuel accumulation (pp. 3, 5); costs: smoke and public trust (p. 7).</span></div>
+      </div>
+      <div class="btns"><button id="fslCsv">Download model table (CSV)</button><span class="status" id="fslCsvStatus"></span></div>
+      <details class="fsl-details"><summary>Year-by-year table of the selected run (like the SEIR spreadsheet in Unit 2)</summary><div class="tablewrap"><table><thead><tr><th class="num">Year</th><th class="num">Fuel F</th><th class="num">Accumulation</th><th class="num">Wildfire use</th><th class="num">Low-int. use</th><th class="num">Burned %</th><th class="num">High sev. %</th><th class="num">Gap</th></tr></thead><tbody id="fslSheet"></tbody></table></div></details>
+      <p class="note"><b>Limits.</b> Stylised and not calibrated: the fuel stock, intensity classes and suppression filters are assumptions chosen so that the model reproduces the direction of the published effects. Kreider et al. simulate western North American forests (p. 7), do not simulate fuel feedback or dynamic resource allocation (p. 6) and do not model prescribed burning. The decision to raise suppression after bad years (B1 response) is an assumption of this model.</p>
+      <p class="note"><b>Sources.</b> Kreider, M. R., Higuera, P. E., Parks, S. A., Rice, W. L., White, N., &amp; Larson, A. J. (2024). Fire suppression makes wildfires more severe and accentuates impacts of climate change and fuel accumulation. <i>Nature Communications, 15</i>, 2412. <a href="https://doi.org/10.1038/s41467-024-46702-0" target="_blank" rel="noopener">https://doi.org/10.1038/s41467-024-46702-0</a> · Thompson, M. P., Wei, Y., Dunn, C. J., &amp; O'Connor, C. D. (2019). A system dynamics model examining alternative wildfire response policies. <i>Systems, 7</i>(4), 49. <a href="https://doi.org/10.3390/systems7040049" target="_blank" rel="noopener">https://doi.org/10.3390/systems7040049</a> · Loop notation: Rauner, M. (2026). <i>System dynamics (Unit 2)</i> [Lecture slides]. University of Vienna.</p>
+    </div>
+  </section>
+
   <section class="view" id="view-cmp" role="tabpanel" aria-labelledby="tab-cmp" hidden>
-    <p class="question"><span>Synthesis</span>Which method answers which WWF question?</p>
+    <p class="question"><span>Synthesis</span>Which method answers which policy question?</p>
     <div class="panel">
       <div class="tablewrap"><table>
-        <thead><tr><th></th><th>Agent-based (ABWiSE)</th><th>Cellular automaton + brigades</th><th>System dynamics (SD)</th><th>Discrete event (DES)</th></tr></thead>
+        <thead><tr><th></th><th>Agent-based (ABWiSE)</th><th>Cellular automaton + brigades</th><th>System dynamics (SD)</th><th>Discrete event (DES)</th><th>Feedback loops (Workshop 2)</th></tr></thead>
         <tbody>
-          <tr><td>WWF question</td><td>How do wind, drought and degraded forest shape a fire front?</td><td>When does a fire cross the landscape, and which local measures stop it?</td><td>Does the Amazon cross its tipping point by 2100?</td><td>How many brigades are needed in the fire season?</td></tr>
-          <tr><td>Level</td><td>Individual mobile fire agents</td><td>Individual cells + brigade agents</td><td>Aggregate stocks (cohort)</td><td>Individual alerts in a process</td></tr>
-          <tr><td>Abstraction</td><td>Low · operational (minutes)</td><td>Low · operational</td><td>High · strategic</td><td>Medium · tactical/operational</td></tr>
-          <tr><td>Time</td><td>Time slicing (1 tick = 1 minute)</td><td>Time slicing (ticks)</td><td>Continuous (numerical integration, dt = 0.25 y)</td><td>Next-event technique</td></tr>
-          <tr><td>Randomness</td><td>Stochastic</td><td>Stochastic</td><td>Deterministic</td><td>Stochastic</td></tr>
-          <tr><td>Key mechanism</td><td>Agent interaction and fire–wind feedback → emergent front</td><td>Neighbour rule → percolation threshold</td><td>Feedback loops (R1, R2, B1)</td><td>Queues and limited resources</td></tr>
-          <tr><td>Main output</td><td>Burned area, front shape, rate of spread</td><td>Burned share, threshold cover</td><td>Forest cover, tipping year</td><td>Waiting time, utilisation</td></tr>
-          <tr><td>Limitation</td><td>Calibrated in Canada; Amazon fuels stylised; no human decision-makers</td><td>Brigades identical and fully informed; no human decisions</td><td>Aggregated, no spatial detail</td><td>No fire physics</td></tr>
+          <tr><td>Policy question</td><td>How do wind, drought and degraded forest shape a fire front?</td><td>When does a fire cross the landscape, and which local measures stop it?</td><td>Does the Amazon cross its tipping point by 2100?</td><td>How many brigades are needed in the fire season?</td><td>Why can suppressing every fire make future fires worse?</td></tr>
+          <tr><td>Level</td><td>Individual mobile fire agents</td><td>Individual cells + brigade agents</td><td>Aggregate stocks (cohort)</td><td>Individual alerts in a process</td><td>Aggregate loops + 2,000 individual fires</td></tr>
+          <tr><td>Abstraction</td><td>Low · operational (minutes)</td><td>Low · operational</td><td>High · strategic</td><td>Medium · tactical/operational</td><td>High · strategic</td></tr>
+          <tr><td>Time</td><td>Time slicing (1 tick = 1 minute)</td><td>Time slicing (ticks)</td><td>Continuous (numerical integration, dt = 0.25 y)</td><td>Next-event technique</td><td>Annual steps (Level/Rate equations)</td></tr>
+          <tr><td>Randomness</td><td>Stochastic</td><td>Stochastic</td><td>Deterministic</td><td>Stochastic</td><td>Deterministic loops; stochastic fire experiment</td></tr>
+          <tr><td>Key mechanism</td><td>Agent interaction and fire–wind feedback → emergent front</td><td>Neighbour rule → percolation threshold</td><td>Feedback loops (R1, R2, B1)</td><td>Queues and limited resources</td><td>B1 short-term fix vs. R1, R2 long-term fail; B2 fix</td></tr>
+          <tr><td>Main output</td><td>Burned area, front shape, rate of spread</td><td>Burned share, threshold cover</td><td>Forest cover, tipping year</td><td>Waiting time, utilisation</td><td>Burned area, high-severity share, loop dominance</td></tr>
+          <tr><td>Limitation</td><td>Calibrated in Canada; Amazon fuels stylised; no human decision-makers</td><td>Brigades identical and fully informed; no human decisions</td><td>Aggregated, no spatial detail</td><td>No fire physics</td><td>Stylised; western North American forests (Kreider et al., 2024)</td></tr>
         </tbody>
       </table></div>
     </div>
@@ -882,7 +1020,7 @@ function runDES(q, withLog){
   function axisY(svg,L,R,W,sy,ticks,fmt){ for (const y of ticks){ el("line",{x1:L,x2:W-R,y1:sy(y),y2:sy(y),class:"grid"},svg); el("text",{x:L-6,y:sy(y)+4,"text-anchor":"end"},svg,fmt(y)); } }
 
   // ================= TABS =================
-  const tabs=["abw","abm","sd","des","cmp"];
+  const tabs=["abw","abm","sd","des","fsl","cmp"];
   function show(name){
     for (const t of tabs){ $("tab-"+t).setAttribute("aria-selected", t===name?"true":"false"); $("view-"+t).hidden = t!==name; }
     if (name!=="abm") stop(); if (name!=="abw" && typeof abStop==="function" && ab) abStop();
@@ -905,7 +1043,7 @@ function runDES(q, withLog){
     {name:"Rain arrives", note:"Drought year, but the rainy season starts at tick 40.", p:{drought:85,wind:20,degradation:25,rain:40}},
     {name:"Late brigades", note:"Drought year with 20 brigades that only start after 30 ticks.", p:{drought:85,wind:20,degradation:25,ff:20,delay:30}},
     {name:"Protected territory", note:"Drought year; right third is intact protected or Indigenous land.", p:{drought:85,wind:20,degradation:25,protected:true}},
-    {name:"WWF package", note:"Drought year with restoration (degradation 10 %), protected territory, firebreak and 20 fast brigades.", p:{drought:85,wind:20,degradation:10,protected:true,firebreak:true,ff:20,delay:5}},
+    {name:"Full policy package", note:"Drought year with restoration (degradation 10 %), protected territory, firebreak and 20 fast brigades.", p:{drought:85,wind:20,degradation:10,protected:true,firebreak:true,ff:20,delay:5}},
   ];
   function presetParams(pr){ return {...BASE,...pr.p}; }
   function applyParams(p){
@@ -1057,8 +1195,8 @@ function runDES(q, withLog){
   const SD_PRESETS=[
     {name:"Business as usual", q:{def:0.6,warm:2.7,cut:0,rest:0,fm:0}},
     {name:"High warming", q:{def:0.6,warm:4.0,cut:0,rest:0,fm:0}},
-    {name:"WWF partial", q:{def:0.6,warm:2.7,cut:50,rest:0.5,fm:30}},
-    {name:"WWF full package", q:{def:0.6,warm:2.7,cut:90,rest:1.5,fm:60}},
+    {name:"Partial policy package", q:{def:0.6,warm:2.7,cut:50,rest:0.5,fm:30}},
+    {name:"Full policy package", q:{def:0.6,warm:2.7,cut:90,rest:1.5,fm:60}},
     {name:"Paris 1.5 °C only", q:{def:0.6,warm:1.5,cut:0,rest:0,fm:0}},
   ];
   function sdQ(){ return {def:+$("sdDef").value, warm:+$("sdWarm").value, cut:+$("sdCut").value, rest:+$("sdRest").value, fm:+$("sdFm").value}; }
@@ -1088,7 +1226,7 @@ function runDES(q, withLog){
     const e=series[series.length-1];
     $("sdForest").textContent=Math.round((e.F+e.D)*100)+"%"; $("sdIntact").textContent=Math.round(e.F*100)+"%"; $("sdTip").textContent= tip?Math.round(tip):"none";
     $("sdNote").innerHTML = tip
-      ? "Rainfall falls below the critical 0.68 in <b>"+Math.round(tip)+"</b>. From then on dieback adds to deforestation and fire, and forest cover drops to <b>"+Math.round((e.F+e.D)*100)+" %</b> by 2100."
+      ? "Rainfall falls below the assumed critical value 0.68 in <b>"+Math.round(tip)+"</b>. From then on dieback adds to deforestation and fire, and forest cover drops to <b>"+Math.round((e.F+e.D)*100)+" %</b> by 2100."
       : "Rainfall stays above the critical level until 2100. Forest cover ends at <b>"+Math.round((e.F+e.D)*100)+" %</b>, of which <b>"+Math.round(e.F*100)+" %</b> intact.";
   }
   function renderSDScen(){
@@ -1111,7 +1249,7 @@ function runDES(q, withLog){
     const defs=el("defs",{},svg); const m=el("marker",{id:"ah",viewBox:"0 0 10 10",refX:"9",refY:"5",markerWidth:"7",markerHeight:"7",orient:"auto-start-reverse"},defs);
     el("path",{d:"M0,0 L10,5 L0,10 z",fill:pal.mutedCss},m);
     const nodes={FC:{x:240,y:185,t:["Forest","cover"]},RF:{x:420,y:58,t:["Rainfall","(moisture recycling)"]},DR:{x:590,y:185,t:["Drought &","fire risk"]},
-      DG:{x:420,y:312,t:["Degraded","forest"]},WP:{x:88,y:62,t:["Public pressure","(WWF campaigns)"]},DF:{x:88,y:308,t:["Deforestation"]}};
+      DG:{x:420,y:312,t:["Degraded","forest"]},WP:{x:88,y:62,t:["Public pressure","(campaigns)"]},DF:{x:88,y:308,t:["Deforestation"]}};
     const rx=78, ry=27;
     function edge(a,b,sign,curv,lx,ly){
       const A=nodes[a],B=nodes[b]; const mx=(A.x+B.x)/2, my=(A.y+B.y)/2; const dx=B.x-A.x, dy=B.y-A.y, len=Math.hypot(dx,dy);
@@ -1143,8 +1281,8 @@ function runDES(q, withLog){
   const DES_PRESETS=[
     {name:"Normal season", q:{lam:6,S:6,G:10,c:4,disc:"fifo"}},
     {name:"Drought peak", q:{lam:20,S:6,G:15,c:4,disc:"fifo"}},
-    {name:"WWF: + brigades", q:{lam:20,S:6,G:15,c:7,disc:"fifo"}},
-    {name:"WWF: early warning", q:{lam:20,S:3.5,G:15,c:5,disc:"fifo"}},
+    {name:"More brigades", q:{lam:20,S:6,G:15,c:7,disc:"fifo"}},
+    {name:"Early warning", q:{lam:20,S:3.5,G:15,c:5,disc:"fifo"}},
     {name:"Protect territory first", q:{lam:20,S:6,G:15,c:6,disc:"prot"}},
   ];
   function desQ(){ return {lam:+$("dLam").value, S:+$("dS").value, G:+$("dG").value, c:+$("dC").value, disc:$("dDisc").value}; }
@@ -1210,7 +1348,7 @@ function runDES(q, withLog){
     {name:"Windy drought + embers", note:"Strong wind and ember spotting: the front stretches downwind and jumps ahead.", p:{drought:80,windSpeed:35,spotting:true}},
     {name:"Degraded frontier", note:"Logging and edge effects: most forest near the frontier is degraded.", p:{drought:60,degradation:85}},
     {name:"Calm day", note:"Almost no wind: the fire spreads in all directions.", p:{drought:60,windSpeed:2}},
-    {name:"WWF: restore + firebreak", note:"Drought year, but degraded forest restored (5 %) and a firebreak road.", p:{drought:80,degradation:5,firebreak:true}},
+    {name:"Restore + firebreak", note:"Drought year, but degraded forest restored (5 %) and a firebreak road.", p:{drought:80,degradation:5,firebreak:true}},
   ];
   function abQ(){ return { windSpeed:+$("abwWind").value, windDir:+$("abwDir").value, drought:+$("abwDrought").value, degradation:+$("abwDeg").value,
     m1:+$("abwM1").value, stoptime:+$("abwStop").value, spotting:$("abwSpot").checked, hills:$("abwHills").checked,
@@ -1364,7 +1502,7 @@ function runDES(q, withLog){
   // ================= SHARE / QR =================
   // On a public host (GitHub Pages, Netlify, own server) the QR code points to the page itself
   const selfHosted = /^https?:$/.test(location.protocol) && /(github\.io|netlify\.app|pages\.dev|vercel\.app|univie\.ac\.at)$/.test(location.hostname);
-  const SHARE_URL = selfHosted ? location.href.split("#")[0] : "https://claude.ai/artifact/Brrqf61Jj7qMzLVPYvVoxm";
+  const SHARE_URL = selfHosted ? location.href.split("#")[0] : "https://marsmalte.github.io/amazon-fire-lab/";
   $("shareUrl").textContent=SHARE_URL; $("shareUrl2").textContent=SHARE_URL;
   function makeQR(target,size){
     target.textContent="";
@@ -1390,6 +1528,419 @@ function runDES(q, withLog){
   renderSD(); renderSDScen(); drawCLD(); renderDES();
   const h=(location.hash||"").slice(1); if (tabs.includes(h)) show(h);
   runSweep().then(runScen);
+})();
+</script>
+
+<script>
+// ===== FSL-MODEL-START: fire suppression loops (Workshop 2), pure functions =====
+// Illustrative stock-and-flow model behind the causal loop diagram. Not calibrated.
+// Policy filters follow the scenario logic of Kreider et al. (2024, pp. 2, 7):
+// regressive scenarios suppress low-intensity fire most, progressive suppresses
+// higher-intensity fire more, and no scenario can suppress extreme fire.
+const FSL_POLICIES = {
+  // suppression effectiveness for low / moderate / high (still suppressible) / extreme fire
+  none:        {label:"No suppression", short:"None",        e:[0.00,0.00,0.00,0.00]},
+  progressive: {label:"Progressive",    short:"Progressive", e:[0.00,0.05,0.75,0.15]},
+  moderate:    {label:"Moderate (4 h)", short:"Moderate",    e:[0.75,0.45,0.15,0.02]},
+  high:        {label:"High (2 h)",     short:"High",        e:[0.88,0.60,0.22,0.03]},
+  maximum:     {label:"Maximum (1 h)",  short:"Maximum",     e:[0.96,0.72,0.28,0.03]}
+};
+const FSL_ORDER = ["none","progressive","moderate","high","maximum"];
+const FSL = {
+  years:100, F0:11.23, Fmax:32, kAcc:0.0138, consume:0.85, rxConsume:0.7,
+  p0:3.0,          // % of landscape that would burn per year at F0 without suppression
+  fuelExp:1.2, aridK:0.45,
+  sev:[0.02,0.20,0.60,0.85],   // share burning at high severity in low / moderate / high / extreme fire
+  gamma:0.35, accepted:1.0, effCap:0.97
+};
+function fslShares(F, A){
+  // intensity mix of potential fire: more fuel and drier conditions shift it toward extreme fire
+  const z = 0.18*(F-FSL.F0) + 1.5*A;
+  const cut=[-0.6, 0.9, 2.3];                    // class boundaries on the intensity scale
+  const cdf=c=>1/(1+Math.exp(-(c-z)));
+  const c0=cdf(cut[0]), c1=cdf(cut[1]), c2=cdf(cut[2]);
+  return [c0, c1-c0, c2-c1, 1-c2];
+}
+function fslPotential(F, A){ return FSL.p0*Math.pow(Math.max(F,0.1)/FSL.F0, FSL.fuelExp)*Math.exp(FSL.aridK*A); }
+function fslFire(F, A, eff){
+  const P=fslPotential(F,A), s=fslShares(F,A);
+  let burned=0, hs=0, prevented=0;
+  for (let i=0;i<4;i++){ const b=P*s[i]*(1-eff[i]); burned+=b; hs+=b*FSL.sev[i]; prevented+=P*s[i]*eff[i]; }
+  return {P, s, burned, hs, prevented, hsShare: burned>0? hs/burned : 0};
+}
+// q: {policy, rx (% of landscape treated per year), trend (aridity units per decade), response (0/1 B1 adaptive effort)}
+function fslRun(q){
+  const base=FSL_POLICIES[q.policy].e;
+  let F=FSL.F0, lastBurn=FSL.accepted;
+  const adaptive = q.response && (q.policy==="moderate"||q.policy==="high"||q.policy==="maximum");
+  const out=[];
+  for (let t=0;t<=FSL.years;t++){
+    const A=q.trend*t/10;
+    // B1: gap between burned area and accepted level raises suppression effort (regressive scenarios)
+    const gap=Math.max(0,lastBurn-FSL.accepted);
+    const mult = adaptive ? 1+FSL.gamma*gap/FSL.accepted : 1;
+    const eff=base.map(e=>Math.min(FSL.effCap, e*mult));
+    const f=fslFire(F,A,eff);
+    const acc=FSL.kAcc*(FSL.Fmax-F);
+    const cons=f.burned/100*F*FSL.consume;
+    const rxc=q.rx/100*F*FSL.rxConsume;
+    out.push({t, A, F, gap, eff, P:f.P, burned:f.burned, hsArea:f.hs, hsShare:f.hsShare, prevented:f.prevented,
+              acc, cons, rx:rxc, shares:f.s});
+    F=Math.max(0.5, F+acc-cons-rxc);   // Level(t) = Level(t-1) + inflow - outflows
+    lastBurn=f.burned;
+  }
+  return out;
+}
+// indicative loop activity per year, in % of landscape per year
+function fslLoops(q){
+  const run=fslRun(q);
+  const ns=fslRun({...q, policy:"none", response:false});
+  const nrx=fslRun({...q, rx:0});
+  return run.map((r,i)=>{
+    const B1=r.prevented;                                              // area kept from burning now
+    const atNsFuel=fslFire(ns[i].F, r.A, r.eff).burned;
+    const R1=Math.max(0, r.burned-atNsFuel);                           // extra area from fuel built up by suppression
+    const mixNs=fslFire(r.F, r.A, [0,0,0,0]).hsShare;
+    const R2=Math.max(0, r.hsArea - r.burned*mixNs);                   // extra high-severity area from the suppression filter
+    const B2=Math.max(0, nrx[i].burned - r.burned);                    // area avoided by low-intensity fire / fuel treatment
+    return {t:r.t, B1, R1, R2, B2};
+  });
+}
+function fslGrowth(run, from=10){
+  // average annual growth of burned area (log-linear fit), %/yr
+  const pts=run.filter(r=>r.t>=from && r.burned>0);
+  const n=pts.length, mx=pts.reduce((a,r)=>a+r.t,0)/n, my=pts.reduce((a,r)=>a+Math.log(r.burned),0)/n;
+  let sxy=0,sxx=0; for (const r of pts){ sxy+=(r.t-mx)*(Math.log(r.burned)-my); sxx+=(r.t-mx)**2; }
+  const b=sxy/sxx; return {rate:(Math.exp(b)-1)*100, doubling: b>0 ? Math.log(2)/b : Infinity};
+}
+// ---- individual fires: suppression filter experiment (stochastic, one fire season) ----
+function fslRng(seed){ let s=seed>>>0||1; return ()=>{ s^=s<<13; s>>>=0; s^=s>>17; s^=s<<5; s>>>=0; return s/4294967296; }; }
+// share of daily spread that is suppressed, by fire intensity I (0 = smouldering ... 1 = extreme)
+// regressive filters suppress low intensity most; progressive suppresses higher intensity most;
+// above I = 0.85 no filter can stop the fire (Kreider et al., 2024, p. 2, Fig. 1b)
+const FSL_FILTER = {
+  none:        I=>0,
+  progressive: I=> I<0.3 ? 0 : (I<0.85 ? 0.75*(I-0.3)/0.55 : 0.75*Math.max(0,(1-I)/0.15)),
+  moderate:    I=> I<0.85 ? Math.min(0.97,0.80*(1-I/0.85)+0.15) : 0.15*Math.max(0,(1-I)/0.15),
+  high:        I=> I<0.85 ? Math.min(0.98,0.90*(1-I/0.85)+0.20) : 0.20*Math.max(0,(1-I)/0.15),
+  maximum:     I=> I<0.85 ? Math.min(0.99,0.95*(1-I/0.85)+0.25) : 0.25*Math.max(0,(1-I)/0.15)
+};
+const FSL_ATTACK = {none:null, progressive:null, moderate:4, high:2, maximum:1};   // hours to initial attack (Kreider et al., 2024, p. 7)
+function fslFires(policy, n=2000, seed=7, aridity=0){
+  const rnd=fslRng(seed), filt=FSL_FILTER[policy], ia=FSL_ATTACK[policy];
+  const sizes=[]; let total=0, hsTotal=0;
+  for (let k=0;k<n;k++){
+    let w=rnd()*0.8+0.15*aridity, r=0.02, area=Math.PI*r*r*100, hs=0;     // radius in km, area in ha
+    const season=Math.floor(5+rnd()*40);
+    for (let d=0; d<season; d++){
+      w=0.7*w+0.3*(rnd()*1.05+0.2*aridity);                                // autocorrelated fire weather
+      const I=Math.max(0,Math.min(1,w));
+      if (d===0 && ia!==null){
+        const pEscape=Math.min(1, 0.01+Math.pow(I,4)*(0.2+0.1*ia));       // initial attack: escape rises with intensity and delay
+        if (rnd()>pEscape) break;
+      }
+      if (I<0.3 && rnd()<0.4) break;                                      // weather too mild: fire goes out
+      const spread=(0.01+0.9*I*I*I)*(1-filt(I));                             // km per day after suppression
+      if (spread<0.004) break;
+      const r2=r+spread, add=Math.PI*(r2*r2-r*r)*100; r=r2; area+=add;
+      hs+=add*(I>0.75?0.85:I>0.5?0.45:I>0.3?0.12:0.02);
+    }
+    sizes.push(area); total+=area; hsTotal+=hs;
+  }
+  sizes.sort((a,b)=>b-a);
+  const top=Math.max(1,Math.round(n*0.01)); let topArea=0; for (let i=0;i<top;i++) topArea+=sizes[i];
+  const small=sizes.filter(x=>x<121).length/n;
+  return {sizes, total, top1:topArea/total, hsShare: total? hsTotal/total : 0, small, n};
+}
+// ===== FSL-MODEL-END =====
+
+// ===== Workshop 2 UI: feedback loops =====
+(() => {
+  const $=id=>document.getElementById(id);
+  const NS="http://www.w3.org/2000/svg";
+  if (!$("view-fsl")) return;
+  function el(tag,attrs,parent,text){ const e=document.createElementNS(NS,tag); for(const k in attrs) e.setAttribute(k,attrs[k]); if(text!=null) e.textContent=text; if(parent) parent.appendChild(e); return e; }
+  const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+  const fmt1=x=>(Math.round(x*10)/10).toFixed(1);
+  const MINUS="−";
+
+  // ---------------- 1 · causal loop diagram ----------------
+  const NODES={
+    gap:  {x:410,y:40,  t:["Gap: burned area","vs. accepted level"]},
+    bur:  {x:95, y:150, t:["Burned area"]},
+    sup:  {x:720,y:150, t:["Suppression","effort"]},
+    fuel: {x:440,y:245, t:["Fuel load"]},
+    sev:  {x:190,y:305, t:["Fire intensity","and severity"]},
+    shx:  {x:705,y:345, t:["Share of fires","under extreme","conditions"]},
+    fgap: {x:635,y:250, t:["Fuel hazard","gap"]},
+    low:  {x:540,y:345, t:["Low-intensity","fire"]}
+  };
+  // sign, bend (px, + = left of travel), loops, evidence, assumption flag
+  const EDGES=[
+    {a:"bur",b:"gap",s:"+",bend:-40,loops:["B1","R1","R2"],ev:"By definition: the gap is the burned area minus the level a society accepts (logic of the Workshop 2 sample).",as:false},
+    {a:"gap",b:"sup",s:"+",bend:-40,loops:["B1","R1","R2"],ev:"Fire suppression is “the primary management response to wildfires” (Kreider et al., 2024, p. 1).",as:false},
+    {a:"sup",b:"bur",s:"-",bend:0,loops:["B1"],ev:"Under maximum suppression 97-99 % of fires stay below 121 ha, and suppression reduces the absolute burned area compared with no suppression (Kreider et al., 2024, pp. 3-4).",as:false},
+    {a:"sup",b:"fuel",s:"+",bend:-30,delay:true,loops:["R1"],ev:"Suppression paradox: “by suppressing fire today, we increase fuel loads” - an indirect effect with a time lag (Kreider et al., 2024, p. 2, Table 1). Not simulated in their model (p. 6).",as:true},
+    {a:"fuel",b:"sev",s:"+",bend:-15,loops:["R1","B2"],ev:"Higher fuel loading raises fire severity in all scenarios (Kreider et al., 2024, p. 3, Fig. 2b, d).",as:false},
+    {a:"sup",b:"shx",s:"+",bend:-25,loops:["R2"],ev:"Suppression bias: regressive suppression removes low-intensity fire most, so the remaining fires are biased towards extreme fires (Kreider et al., 2024, p. 2, Table 2).",as:false},
+    {a:"shx",b:"sev",s:"+",bend:-95,loops:["R2"],ev:"Maximum suppression raises mean severity by 0.21 Composite Burn Index (CBI) units, equal to 102 years of climate-driven drying (Kreider et al., 2024, p. 3).",as:false},
+    {a:"sev",b:"bur",s:"+",bend:-30,loops:["R1","R2"],ev:"Suppression becomes increasingly impossible at high fire intensities (Kreider et al., 2024, p. 2, Fig. 1b); under maximum suppression 91 % of the burned area comes from the largest 1 % of fires (p. 4).",as:false},
+    {a:"fuel",b:"fgap",s:"+",bend:18,loops:["B2"],ev:"By definition: more fuel than a safe level widens the fuel hazard gap.",as:false},
+    {a:"fgap",b:"low",s:"+",bend:-18,loops:["B2"],ev:"Management response: prescribed and cultural burning and progressive suppression introduce low-intensity fire (Kreider et al., 2024, p. 7). The response itself is an assumption of this model.",as:true},
+    {a:"low",b:"fuel",s:"-",bend:-18,loops:["B2"],ev:"Low-intensity fire consumes fuel. Kreider et al. (2024) argue this (pp. 1, 7) but do not simulate prescribed burning.",as:true}
+  ];
+  const LOOPS={
+    B1:{name:"B1 · Immediate suppression",tag:"short-term fix",kind:"B",at:[410,108],
+        path:["bur","gap","sup","bur"],
+        text:"More burned area than accepted opens a gap, the agency suppresses harder, and the burned area falls. This is the classic goal-seeking loop of Unit 2: it reacts to the deviation from the objective.",
+        ev:["“Primary management response to wildfires” (p. 1).","97-99 % of fires stay below 121 ha under maximum suppression (pp. 3-4).","Suppression reduces the absolute burned area compared with no suppression (p. 4)."]},
+    R1:{name:"R1 · Suppression paradox",tag:"delayed",kind:"R",at:[300,215],
+        path:["gap","sup","fuel","sev","bur","gap"],
+        text:"Every fire that is put out leaves its fuel in the forest. Over years the fuel load rises, fires burn more intensely, escape more often and enlarge the burned area - which calls for even more suppression.",
+        ev:["Paradox defined as indirect, future, via fuel accumulation (p. 2, Table 1).","Kreider et al. do not simulate this loop, so their results are conservative (p. 6).","A published system dynamics model of wildfire response policies contains the same reinforcing loop (Thompson et al., 2019)."]},
+    R2:{name:"R2 · Suppression bias",tag:"immediate",kind:"R",at:[335,352],
+        path:["gap","sup","shx","sev","bur","gap"],
+        text:"Suppression filters out the mild fires it can stop; the fires that survive the filter burn under extreme conditions. The burned area becomes more severe right away - Kreider et al. compare this with the over-prescription of antibiotics (p. 4).",
+        ev:["Bias defined as direct and immediate (p. 2, Table 1).","Mean severity +0.21 CBI = 102 years of climate-driven drying (p. 3).","91 % of burned area from the largest 1 % of fires vs. 4 % without suppression (p. 4)."]},
+    B2:{name:"B2 · Low-intensity fire",tag:"long-term fix",kind:"B",at:[545,280],
+        path:["fuel","fgap","low","fuel"],
+        text:"If fuel exceeds a safe level, managers let fire burn under mild conditions or set it on purpose. This removes fuel and works against R1 at its root.",
+        ev:["Managing wildfires to burn under low and moderate conditions is “a critical tool” (p. 1).","Progressive suppression: 17 % / 15 % less high-severity share (p. 3) and one to nearly two decades of climate change or fuel accumulation offset (p. 5).","Costs: more low-level smoke, little public trust, agency cultures that favour suppression (p. 7)."]}
+  };
+  const NODE_W=n=>Math.max(...n.t.map(s=>s.length))*8.2+26, NODE_H=n=>n.t.length*18+16;
+  let selLoop="all", selEdge=null;
+
+  function edgeGeom(e){
+    const A=NODES[e.a], B=NODES[e.b];
+    const mx=(A.x+B.x)/2, my=(A.y+B.y)/2, dx=B.x-A.x, dy=B.y-A.y, L=Math.hypot(dx,dy);
+    const nx=-dy/L, ny=dx/L, c={x:mx+nx*e.bend, y:my+ny*e.bend};
+    const clip=(N,tx,ty)=>{ const w=NODE_W(N)/2+5, h=NODE_H(N)/2+5, ddx=tx-N.x, ddy=ty-N.y;
+      const s=Math.min(ddx?w/Math.abs(ddx):1e9, ddy?h/Math.abs(ddy):1e9); return {x:N.x+ddx*s, y:N.y+ddy*s}; };
+    const p0=clip(A,c.x,c.y), p2=clip(B,c.x,c.y);
+    const q=t=>({x:(1-t)**2*p0.x+2*(1-t)*t*c.x+t*t*p2.x, y:(1-t)**2*p0.y+2*(1-t)*t*c.y+t*t*p2.y});
+    const d=t=>({x:2*(1-t)*(c.x-p0.x)+2*t*(p2.x-c.x), y:2*(1-t)*(c.y-p0.y)+2*t*(p2.y-c.y)});
+    return {p0,c,p2,q,d};
+  }
+  function drawCld(){
+    const svg=$("fslCld"); svg.textContent="";
+    const defs=el("defs",{},svg);
+    for (const [id,col] of [["fslArr","var(--ink)"],["fslArrH","var(--accent)"]]){
+      const m=el("marker",{id,viewBox:"0 0 10 10",refX:"9",refY:"5",markerWidth:"7",markerHeight:"7",orient:"auto-start-reverse"},defs);
+      el("path",{d:"M0,0 L10,5 L0,10 z",style:"fill:"+col},m);
+    }
+    const active=e=> selLoop==="all" || e.loops.includes(selLoop);
+    EDGES.forEach((e,i)=>{
+      const g=edgeGeom(e), on=active(e), hi=selEdge===i;
+      const grp=el("g",{class:"fsl-edge",tabindex:"0",role:"button","aria-label":`${nodeName(e.a)} to ${nodeName(e.b)}, ${e.s==="-"?"minus":"plus"}`,style:"cursor:pointer;opacity:"+(on?1:0.13)},svg);
+      const dpath=`M${g.p0.x},${g.p0.y} Q${g.c.x},${g.c.y} ${g.p2.x},${g.p2.y}`;
+      el("path",{d:dpath,style:"fill:none;stroke:transparent;stroke-width:16"},grp);
+      el("path",{d:dpath,style:`fill:none;stroke:${hi?"var(--accent)":"var(--ink)"};stroke-width:${hi?3:1.7};${e.as?"stroke-dasharray:6 4;":""}`,"marker-end":`url(#${hi?"fslArrH":"fslArr"})`},grp);
+      const t=0.8, p=g.q(t), d=g.d(t), dl=Math.hypot(d.x,d.y), side=e.bend>=0?1:-1;
+      const ox=-d.y/dl*15*side, oy=d.x/dl*15*side;
+      el("text",{x:p.x+ox,y:p.y+oy+5,"text-anchor":"middle",class:e.s==="-"?"fsl-sign fsl-minus":"fsl-sign fsl-plus"},grp,e.s==="-"?MINUS:"+");
+      if (e.delay){ const m=g.q(0.5), dd=g.d(0.5), l=Math.hypot(dd.x,dd.y), ux=dd.x/l, uy=dd.y/l;
+        for (const o of [-3.5,3.5]) el("line",{x1:m.x+ux*o-uy*9,y1:m.y+uy*o+ux*9,x2:m.x+ux*o+uy*9,y2:m.y+uy*o-ux*9,style:"stroke:var(--ink);stroke-width:2"},grp); }
+      const pick=()=>{ selEdge=i; drawCld(); showEdge(i); };
+      grp.addEventListener("click",pick);
+      grp.addEventListener("keydown",ev=>{ if(ev.key==="Enter"||ev.key===" "){ ev.preventDefault(); pick(); } });
+    });
+    for (const k in NODES){
+      const n=NODES[k], w=NODE_W(n), h=NODE_H(n);
+      const on = selLoop==="all" || LOOPS[selLoop].path.includes(k);
+      const g=el("g",{style:"opacity:"+(on?1:0.3)},svg);
+      el("rect",{x:n.x-w/2,y:n.y-h/2,width:w,height:h,rx:9,style:`fill:var(--surface);stroke:${k==="sup"||k==="low"?"var(--accent)":"var(--line)"};stroke-width:1.5`},g);
+      n.t.forEach((s,j)=>el("text",{x:n.x,y:n.y-(n.t.length-1)*9+j*18+5,"text-anchor":"middle",class:"fsl-node"},g,s));
+    }
+    for (const k in LOOPS){
+      const L=LOOPS[k], on=selLoop==="all"||selLoop===k;
+      const g=el("g",{style:"opacity:"+(on?1:0.2)},svg);
+      el("circle",{cx:L.at[0],cy:L.at[1],r:20,style:`fill:${L.kind==="B"?"var(--surface)":"var(--accent-soft)"};stroke:${L.kind==="B"?"var(--forest)":"var(--accent)"};stroke-width:1.6`},g);
+      el("text",{x:L.at[0],y:L.at[1]+5,"text-anchor":"middle",class:"fsl-loop",style:`fill:${L.kind==="B"?"var(--forest)":"var(--accent)"}`},g,k);
+    }
+  }
+  const nodeName=k=>NODES[k].t.join(" ");
+  function loopEdges(k){ const p=LOOPS[k].path, out=[]; for (let i=0;i<p.length-1;i++) out.push(EDGES.find(e=>e.a===p[i]&&e.b===p[i+1])); return out; }
+  function showLoop(k){
+    const box=$("fslInfo");
+    if (k==="all"){
+      box.innerHTML=`<h2>Four loops, one system</h2>
+        <p class="note">The diagram follows the structure of the Workshop 2 sample: a balancing loop that fixes the problem in the short term (B1), reinforcing loops through which the fix fails in the long term (R1, R2), and a second balancing loop that attacks the cause (B2).</p>
+        <div class="tablewrap"><table><thead><tr><th>Loop</th><th class="num">“−” links</th><th>Type</th><th>Role</th></tr></thead><tbody>
+        ${Object.keys(LOOPS).map(id=>{ const n=loopEdges(id).filter(e=>e.s==="-").length; return `<tr><td><b>${id}</b> ${esc(LOOPS[id].name.split("· ")[1])}</td><td class="num">${n}</td><td>${n%2?"balancing":"reinforcing"}</td><td>${esc(LOOPS[id].tag)}</td></tr>`; }).join("")}
+        </tbody></table></div>
+        <p class="note">The type in the third column is computed from the signs of the arrows, not typed in: odd number of “−” = balancing, even = reinforcing (Unit 2).</p>`;
+      return;
+    }
+    const L=LOOPS[k], es=loopEdges(k), minus=es.filter(e=>e.s==="-").length, type=minus%2?"balancing":"reinforcing";
+    const chain=L.path.map((n,i)=> i<es.length ? `${esc(nodeName(n))} <b class="${es[i].s==="-"?"fsl-minus":"fsl-plus"}">→(${es[i].s==="-"?MINUS:"+"}${es[i].delay?", delay":""})</b> ` : esc(nodeName(n))).join("");
+    box.innerHTML=`<h2>${esc(L.name)}</h2>
+      <div class="btns"><span class="pill ${L.kind==="B"?"ok":"warn"}">${minus} × “−” → ${minus%2?"odd":"even"} → ${type}</span><span class="pill">${esc(L.tag)}</span></div>
+      <p class="fsl-chain">${chain}</p>
+      <p>${esc(L.text)}</p>
+      <h3 class="sub">Evidence (Kreider et al., 2024, unless stated)</h3>
+      <ul class="fsl-ev">${L.ev.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`;
+  }
+  function showEdge(i){
+    const e=EDGES[i];
+    $("fslInfo").innerHTML=`<h2>${esc(nodeName(e.a))} → ${esc(nodeName(e.b))}</h2>
+      <div class="btns"><span class="pill ${e.s==="-"?"warn":"ok"}">${e.s==="-"?MINUS+" opposite direction":"+ same direction"}</span>${e.delay?'<span class="pill">delay</span>':""}${e.as?'<span class="pill">assumption</span>':""}<span class="pill">part of ${e.loops.join(", ")}</span></div>
+      <p>${esc(e.ev)}</p>
+      <p class="note">Reading: if “${esc(nodeName(e.a))}” increases, “${esc(nodeName(e.b))}” ${e.s==="-"?"decreases":"increases"}, all else being equal (Brailsford, 2019, in Unit 2).</p>
+      <div class="btns"><button id="fslBack">Back to the loops</button></div>`;
+    $("fslBack").addEventListener("click",()=>{ selEdge=null; drawCld(); showLoop(selLoop); });
+  }
+  function loopButtons(){
+    const box=$("fslLoopBtns"); box.textContent="";
+    for (const k of ["all","B1","R1","R2","B2"]){
+      const b=document.createElement("button"); b.textContent=k==="all"?"All loops":k+" · "+LOOPS[k].tag;
+      b.setAttribute("aria-pressed", String(selLoop===k));
+      b.addEventListener("click",()=>{ selLoop=k; selEdge=null; loopButtons(); drawCld(); showLoop(k); });
+      box.appendChild(b);
+    }
+  }
+
+  // ---------------- 2 · stock-and-flow model ----------------
+  const POLCOL={none:"var(--muted)",progressive:"var(--forest)",moderate:"var(--degraded)",high:"var(--break)",maximum:"var(--accent)"};
+  let policy="maximum";
+  const q=()=>({policy, rx:+$("fslRx").value, trend:+$("fslTrend").value, response:$("fslResp").checked});
+  function lineChart(svg, series, o){
+    svg.textContent="";
+    const vb=svg.viewBox.baseVal, W=vb.width, H=vb.height, Lm=o.L||44, R=12, T=12, B=26;
+    const xmax=o.xmax, ymax=o.ymax, sx=x=>Lm+x/xmax*(W-Lm-R), sy=y=>H-B-y/ymax*(H-B-T);
+    for (const y of o.yt){ el("line",{x1:Lm,x2:W-R,y1:sy(y),y2:sy(y),class:"grid"},svg); el("text",{x:Lm-6,y:sy(y)+4,"text-anchor":"end"},svg,o.yf(y)); }
+    for (const x of o.xt) el("text",{x:sx(x),y:H-8,"text-anchor":"middle"},svg,o.xf?o.xf(x):x);
+    for (const s of series){
+      el("polyline",{points:s.pts.map(p=>sx(p[0]).toFixed(1)+","+sy(Math.min(p[1],ymax)).toFixed(1)).join(" "),
+        style:`fill:none;stroke:${s.col};stroke-width:${s.w||2};${s.dash?"stroke-dasharray:5 4;":""}`},svg);
+    }
+    return {sx,sy};
+  }
+  const niceMax=v=>{ const p=Math.pow(10,Math.floor(Math.log10(v))); for (const m of [1,1.5,2,2.5,3,4,5,6,8,10]) if (m*p>=v) return m*p; return v; };
+  const ticks=(m,n=4)=>Array.from({length:n+1},(_,i)=>m*i/n);
+  let lastRun=null;
+  function renderModel(){
+    $("vfslTrend").textContent="+"+(+$("fslTrend").value).toFixed(2)+" / decade";
+    $("vfslRx").textContent=(+$("fslRx").value).toFixed(2)+" % / yr";
+    const run=fslRun(q()), ref=fslRun({...q(),policy:"none",response:false});
+    lastRun=run;
+    const m=(a,k)=>a.reduce((s,o)=>s+o[k],0)/a.length;
+    const ym=niceMax(Math.max(...run.map(r=>r.burned),...ref.map(r=>r.burned))*1.08);
+    lineChart($("fslBurn"),[{pts:ref.map(r=>[r.t,r.burned]),col:POLCOL.none,dash:true},{pts:run.map(r=>[r.t,r.burned]),col:POLCOL[policy],w:2.6}],
+      {xmax:100,ymax:ym,yt:ticks(ym),yf:y=>fmt1(y)+" %",xt:[0,20,40,60,80,100],xf:x=>"yr "+x});
+    $("fslBurnLegend").innerHTML=`<span><i class="sw" style="background:${POLCOL[policy]}"></i>${esc(FSL_POLICIES[policy].label)}</span><span><i class="sw" style="background:var(--muted)"></i>No suppression (dashed, same drivers)</span><span>y-axis: burned area, % of landscape per year</span>`;
+    lineChart($("fslSev"),[{pts:ref.map(r=>[r.t,r.hsShare*100]),col:POLCOL.none,dash:true},{pts:run.map(r=>[r.t,r.hsShare*100]),col:POLCOL[policy],w:2.4}],
+      {xmax:100,ymax:100,yt:[0,50,100],yf:y=>y+" %",xt:[0,50,100],L:38});
+    const fm=niceMax(Math.max(...run.map(r=>r.F),...ref.map(r=>r.F))*1.1);
+    lineChart($("fslFuel"),[{pts:ref.map(r=>[r.t,r.F]),col:POLCOL.none,dash:true},{pts:run.map(r=>[r.t,r.F]),col:POLCOL[policy],w:2.4}],
+      {xmax:100,ymax:fm,yt:ticks(fm,2),yf:y=>Math.round(y),xt:[0,50,100],L:38});
+    const e0=run.slice(0,10), e1=run.slice(91), g=fslGrowth(run), gr=fslGrowth(ref);
+    $("fslB0").textContent=fmt1(m(e0,"burned"))+" %"; $("fslB1").textContent=fmt1(m(e1,"burned"))+" %";
+    $("fslG").textContent=(g.rate>=0?"+":"")+g.rate.toFixed(2)+" %"; $("fslHs").textContent=Math.round(m(run,"hsShare")*100)+" %";
+    const r0=m(ref.slice(0,10),"burned"), hsR=m(ref,"hsShare");
+    let note;
+    if (policy==="none") note=`Without suppression the fire regime keeps fuel close to its starting value; burned area changes only with the drying trend (${gr.rate>=0?"+":""}${gr.rate.toFixed(2)} % per year).`;
+    else note=`<b>Short-term fix (B1):</b> in the first decade ${esc(FSL_POLICIES[policy].label.toLowerCase())} burns ${fmt1(m(e0,"burned"))} % instead of ${fmt1(r0)} % of the landscape per year. <b>Long-term fail (R1, R2):</b> the high-severity share is ${Math.round(m(run,"hsShare")*100)} % instead of ${Math.round(hsR*100)} %, fuel ends at ${fmt1(run[100].F)} instead of ${fmt1(ref[100].F)} Mg/ha, and burned area grows by ${g.rate.toFixed(2)} % instead of ${gr.rate.toFixed(2)} % per year${isFinite(g.doubling)&&isFinite(gr.doubling)?` (doubling every ${Math.round(g.doubling)} instead of ${Math.round(gr.doubling)} years)`:""}.`;
+    $("fslNote").innerHTML=note;
+    $("fslPolicyNote").textContent=policyNote(policy);
+    $("fslEq").textContent=eqText();
+    renderDominance(); renderScen(); renderSheet();
+  }
+  function policyNote(p){
+    return {none:"Control scenario: fires burn as weather and fuel allow.",
+      progressive:"No initial attack; suppression targets the higher-intensity fire it can still stop, low-intensity fire is allowed to burn.",
+      moderate:"Regressive: initial attack after 4 h; low-intensity fire is suppressed most.",
+      high:"Regressive: initial attack after 2 h.",
+      maximum:"Regressive: initial attack after 1 h - roughly the maximum effectiveness possible on the ground (Kreider et al., 2024, p. 7)."}[p];
+  }
+  function eqText(){
+    return [
+      "Level (stock)",
+      "  Fuel(t) = Fuel(t-1) + Accumulation(t-1,t)",
+      "            - WildfireUse(t-1,t) - LowIntUse(t-1,t)",
+      "  Fuel(0) = 11.23 Mg/ha (Kreider et al., 2024, Fig. 2)",
+      "Rates (flows)",
+      "  Accumulation = 0.0138 * (32 - Fuel)",
+      "  WildfireUse  = Burned% / 100 * Fuel * 0.85",
+      "  LowIntUse    = LowInt% / 100 * Fuel * 0.70      [B2]",
+      "Auxiliaries",
+      "  Potential  = 3.0 % * (Fuel / 11.23)^1.2 * exp(0.45 * Dryness)",
+      "  Mix_k      = share of low/moderate/high/extreme",
+      "               fire, shifts with Fuel and Dryness  [R1]",
+      "  Burned%    = Potential * Σ Mix_k * (1 - e_k * Resp)",
+      "                                                 [B1, R2]",
+      "  Resp       = 1 + 0.35 * max(0, Burned%(t-1) - 1%)",
+      "               (regressive policies only)        [B1]",
+      "  HighSev    = Σ Burned_k * sev_k / Burned%",
+      "               sev = 2 / 20 / 60 / 85 %",
+      "  e_k (policy " + FSL_POLICIES[policy].short + ") = " + FSL_POLICIES[policy].e.map(x=>Math.round(x*100)+" %").join(" / ")
+    ].join("\n");
+  }
+  function renderDominance(){
+    const L=fslLoops(q()), svg=$("fslDom"); svg.textContent="";
+    const W=460,H=260,Lm=40,R=10,T=12,B=26, keys=["B1","R1","R2","B2"];
+    const col={B1:"var(--forest)",R1:"var(--accent)",R2:"var(--break)",B2:"var(--rain)"};
+    const dec=[]; for (let d=0; d<10; d++){ const s=L.slice(d*10,d*10+10), o={d}; for (const k of keys) o[k]=s.reduce((a,r)=>a+r[k],0)/s.length; dec.push(o); }
+    const ym=niceMax(Math.max(...dec.map(o=>keys.reduce((a,k)=>a+o[k],0)))*1.08||1);
+    const sy=y=>H-B-y/ym*(H-B-T), bw=(W-Lm-R)/10;
+    for (const y of ticks(ym)){ el("line",{x1:Lm,x2:W-R,y1:sy(y),y2:sy(y),class:"grid"},svg); el("text",{x:Lm-6,y:sy(y)+4,"text-anchor":"end"},svg,fmt1(y)); }
+    dec.forEach((o,i)=>{ let base=0; const x=Lm+i*bw+4;
+      for (const k of keys){ if (o[k]<=0) continue; el("rect",{x,y:sy(base+o[k]),width:bw-8,height:Math.max(0,sy(base)-sy(base+o[k])),style:"fill:"+col[k]},svg); base+=o[k]; }
+      el("text",{x:x+(bw-8)/2,y:H-8,"text-anchor":"middle"},svg,(i*10)+"s"); });
+    $("fslDomLegend").innerHTML=keys.map(k=>`<span><i class="sw" style="background:${col[k]}"></i>${k} ${esc(LOOPS[k].tag)}</span>`).join("")+"<span>bars: years 0-9, 10-19, … · y-axis: % of landscape per year</span>";
+  }
+  function renderScen(){
+    const runs=FSL_ORDER.map(p=>({p,r:fslRun({...q(),policy:p})}));
+    const ym=niceMax(Math.max(...runs.flatMap(o=>o.r.map(r=>r.burned)))*1.08);
+    lineChart($("fslScen"),runs.map(o=>({pts:o.r.map(r=>[r.t,r.burned]),col:POLCOL[o.p],w:o.p===policy?3:1.6,dash:o.p==="none"})),
+      {xmax:100,ymax:ym,yt:ticks(ym),yf:y=>fmt1(y)+" %",xt:[0,20,40,60,80,100],xf:x=>"yr "+x,L:40});
+    const m=(a,k)=>a.reduce((s,o)=>s+o[k],0)/a.length;
+    $("fslTable").innerHTML=runs.map(o=>{ const g=fslGrowth(o.r);
+      return `<tr${o.p===policy?' style="font-weight:600"':""}><td><i class="sw" style="background:${POLCOL[o.p]}"></i> ${esc(FSL_POLICIES[o.p].label)}</td><td class="num">${fmt1(m(o.r.slice(0,10),"burned"))} %</td><td class="num">${fmt1(m(o.r.slice(91),"burned"))} %</td><td class="num">${g.rate>=0?"+":""}${g.rate.toFixed(2)} %</td><td class="num">${isFinite(g.doubling)&&g.doubling<1000?Math.round(g.doubling)+" yr":"–"}</td><td class="num">${Math.round(m(o.r,"hsShare")*100)} %</td></tr>`; }).join("");
+  }
+  function renderSheet(){
+    $("fslSheet").innerHTML=lastRun.filter(r=>r.t%5===0).map(r=>`<tr><td class="num">${r.t}</td><td class="num">${r.F.toFixed(2)}</td><td class="num">${r.acc.toFixed(3)}</td><td class="num">${r.cons.toFixed(3)}</td><td class="num">${r.rx.toFixed(3)}</td><td class="num">${r.burned.toFixed(2)}</td><td class="num">${(r.hsShare*100).toFixed(1)}</td><td class="num">${r.gap.toFixed(2)}</td></tr>`).join("");
+  }
+  function policyButtons(id, cur, set){
+    const box=$(id); box.textContent="";
+    for (const p of FSL_ORDER){ const b=document.createElement("button"); b.textContent=FSL_POLICIES[p].label; b.setAttribute("aria-pressed",String(cur()===p)); b.addEventListener("click",()=>{ set(p); policyButtons(id,cur,set); }); box.appendChild(b); }
+  }
+  $("fslCsv").addEventListener("click",()=>{
+    const head="year;fuel_Mg_ha;accumulation;wildfire_use;lowint_use;burned_pct;high_severity_pct;gap;suppression_e_low;e_moderate;e_high;e_extreme";
+    const rows=lastRun.map(r=>[r.t,r.F.toFixed(4),r.acc.toFixed(4),r.cons.toFixed(4),r.rx.toFixed(4),r.burned.toFixed(4),(r.hsShare*100).toFixed(2),r.gap.toFixed(4),...r.eff.map(x=>x.toFixed(3))].join(";"));
+    const blob=new Blob(["sep=;\n"+head+"\n"+rows.join("\n")],{type:"text/csv"});
+    const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=`fire_loops_${policy}.csv`; document.body.appendChild(a); a.click(); a.remove();
+    $("fslCsvStatus").textContent="Saved fire_loops_"+policy+".csv";
+  });
+
+  // ---------------- 5 · individual fires ----------------
+  let firePolicy="maximum", seed=7;
+  function renderFires(){
+    const ar=+$("fslArid").value; $("vfslArid").textContent=ar.toFixed(1);
+    const a=fslFires(firePolicy,2000,seed,ar), b=fslFires("none",2000,seed,ar);
+    const svg=$("fslHist"); svg.textContent="";
+    const W=560,H=260,Lm=44,R=10,T=12,B=30, bins=[0,1,10,121,1000,10000,1e5,1e9], labels=["<1","1-10","10-121","121-1k","1k-10k","10k-100k",">100k"];
+    const count=s=>bins.slice(0,-1).map((lo,i)=>s.sizes.filter(x=>x>=lo&&x<bins[i+1]).length/s.n*100);
+    const ca=count(a), cb=count(b), ym=100, sy=y=>H-B-y/ym*(H-B-T), bw=(W-Lm-R)/labels.length;
+    for (const y of [0,25,50,75,100]){ el("line",{x1:Lm,x2:W-R,y1:sy(y),y2:sy(y),class:"grid"},svg); el("text",{x:Lm-6,y:sy(y)+4,"text-anchor":"end"},svg,y+" %"); }
+    labels.forEach((l,i)=>{ const x=Lm+i*bw;
+      el("rect",{x:x+6,y:sy(cb[i]),width:bw/2-7,height:sy(0)-sy(cb[i]),style:"fill:var(--muted);opacity:.55"},svg);
+      el("rect",{x:x+bw/2+1,y:sy(ca[i]),width:bw/2-7,height:sy(0)-sy(ca[i]),style:"fill:"+POLCOL[firePolicy]},svg);
+      el("text",{x:x+bw/2,y:H-10,"text-anchor":"middle"},svg,l); });
+    el("text",{x:W-R,y:T+4,"text-anchor":"end"},svg,"share of fires by final size (ha)");
+    $("fslHistLegend").innerHTML=`<span><i class="sw" style="background:var(--muted);opacity:.55"></i>No suppression</span><span><i class="sw" style="background:${POLCOL[firePolicy]}"></i>${esc(FSL_POLICIES[firePolicy].label)}</span>`;
+    $("fslSmall").textContent=Math.round(a.small*100)+" %"; $("fslTop").textContent=Math.round(a.top1*100)+" %"; $("fslFhs").textContent=Math.round(a.hsShare*100)+" %";
+    $("fslFireNote").innerHTML = firePolicy==="none" ? `Without suppression fires end when the weather allows: only ${Math.round(a.small*100)} % stay below 121 ha, and the largest 1 % of fires account for ${Math.round(a.top1*100)} % of the burned area.`
+      : `${esc(FSL_POLICIES[firePolicy].label)}: ${Math.round(a.small*100)} % of fires stay below 121 ha (no suppression: ${Math.round(b.small*100)} %), total burned area is only ${Math.max(1,Math.round(a.total/b.total*100))} % of the no-suppression total - <b>but the largest 1 % of fires now cause ${Math.round(a.top1*100)} % of the burned area</b> (no suppression: ${Math.round(b.top1*100)} %). The filter keeps the mild fires out and the extreme ones in: that is loop R2 emerging from individual fires.`;
+  }
+  $("fslArid").addEventListener("input",renderFires);
+  $("fslReseed").addEventListener("click",()=>{ seed=(seed*7919+13)%100000; renderFires(); });
+
+  // ---------------- wiring ----------------
+  for (const id of ["fslTrend","fslRx"]) $(id).addEventListener("input",renderModel);
+  $("fslResp").addEventListener("change",renderModel);
+  policyButtons("fslPolicy",()=>policy,p=>{ policy=p; renderModel(); });
+  policyButtons("fslFirePolicy",()=>firePolicy,p=>{ firePolicy=p; renderFires(); });
+  loopButtons(); drawCld(); showLoop("all"); renderModel(); renderFires();
 })();
 </script>
 
